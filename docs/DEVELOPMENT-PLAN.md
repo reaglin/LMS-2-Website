@@ -109,16 +109,23 @@ Statistle's `resources/STORE-SUBMISSION.md` is the template for the whole phase.
 | 6.4 | Choose where a big deck goes: publish it, or link back to the LMS copy | A 135 MB site is mostly PowerPoint |
 | 6.5 | Canvas and Moodle exports hand-checked | Only Brightspace has been run through a real export |
 | 6.6 | An "unpublish" that empties the branch | Deleting a course site currently means doing it on github.com |
+| 6.7 | A setting for where sites are written: Documents (the default), a local drive, or a folder of the user's choosing | Answer to question 1 — Documents stays the default because that is where people look, but a machine whose Documents is a synced work OneDrive should be able to opt out. Not started: Ron wants to explore it first |
+| 6.8 | Move `github-token.dat` to `%LOCALAPPDATA%`, leaving sites in Documents | Falls out of question 1. The split is clean: sites are user data and belong where people browse, the token is a machine-local secret nobody navigates to. It is DPAPI-encrypted and useless off this machine, but it need not sit in the college tenant at all |
 
 ---
 
-## Open questions for Ron — awaiting answers (asked 2026-09-14, still open 2026-09-15)
+## Open questions for Ron — 1 answered, 2 open (asked 2026-09-14)
 
-1. **The default output folder is `Documents\LMS 2 Website\sites\<course>`.** Confirmed 2026-09-15:
-   `MyDocuments` here resolves to `C:\Users\ronal\OneDrive - Daytona State College\Documents`, so a
-   135 MB course site — and the DPAPI token blob — sync into the **college** tenant, not a personal
-   OneDrive. The token is useless off this machine; the site is just bulk. Should the default move
-   to `%LOCALAPPDATA%`, or is syncing wanted?
+1. ~~**Should the default output folder move off OneDrive?**~~ **Answered 2026-09-15: no — Documents
+   stays.** It is where people will look for their data, and going to the folder directly is part of
+   how the app is meant to be used. A local drive becomes an *option*, not the default (task 6.7),
+   and Ron wants to explore the shape of that first.
+
+   Context that stands: `MyDocuments` here resolves to
+   `C:\Users\ronal\OneDrive - Daytona State College\Documents`, so course sites sync into the
+   college tenant. Two things soften it — the deck opt-out in 6.4 would cut the bulk at its source
+   (question 2), and the token could move to `%LOCALAPPDATA%` on its own (task 6.8) without
+   touching where sites go, since nobody browses to the token.
 2. **The whole cartridge is published, decks and all.** For EGN3443 that is 134 MB of PowerPoint in
    a public repository. Is that what you want, or should the decks be an opt-out (6.4)?
 3. **Which GitHub account** publishes the course sites — `reaglin`, or an organisation?
