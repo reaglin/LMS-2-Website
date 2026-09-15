@@ -1,0 +1,105 @@
+<Window x:Class="Lms2Website.App.Views.HelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Publishing, in plain words" Height="700" Width="640"
+        MinHeight="420" MinWidth="480"
+        Background="{StaticResource Page}"
+        WindowStartupLocation="CenterOwner">
+
+  <Window.Resources>
+    <Style x:Key="H" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Margin" Value="0,18,0,4" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style x:Key="P" TargetType="TextBlock">
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Margin" Value="0,0,0,6" />
+      <Setter Property="Foreground" Value="{StaticResource TextSoft}" />
+      <Setter Property="FontSize" Value="12.5" />
+    </Style>
+  </Window.Resources>
+
+  <DockPanel Margin="16">
+
+    <Border DockPanel.Dock="Bottom" Margin="0,12,0,0">
+      <Button Content="Close" HorizontalAlignment="Right" MinWidth="90" Click="OnClose" IsCancel="True" />
+    </Border>
+
+    <Border Style="{StaticResource CardBorder}">
+      <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+
+          <TextBlock Text="Putting your course on the web" FontSize="16" FontWeight="SemiBold" />
+          <TextBlock Style="{StaticResource P}" Margin="0,6,0,0"
+                     Text="You do not need to know anything about GitHub to use this. Here is the whole of it." />
+
+          <TextBlock Style="{StaticResource H}" Text="What step 3 actually does" />
+          <TextBlock Style="{StaticResource P}"
+                     Text="Step 2 built a finished website — a folder of ordinary web pages on this computer. Step 3 copies that folder to GitHub, a company that will store it and serve it to visitors for free, and gives you a web address you can hand to students." />
+          <TextBlock Style="{StaticResource P}"
+                     Text="Nothing is sent anywhere until you press Publish, and only the built website is sent — never the original export." />
+
+          <TextBlock Style="{StaticResource H}" Text="What you need before you start" />
+          <TextBlock Style="{StaticResource P}">
+            <Run Text="• A free GitHub account —" />
+            <Hyperlink NavigateUri="https://github.com/signup" RequestNavigate="OnNavigate">github.com/signup</Hyperlink>
+            <Run Text="— which takes a couple of minutes." />
+            <LineBreak />
+            <Run Text="• Permission to publish into whatever account or organisation you type in the GitHub account box. Your own account always works. If you type somebody else's — a department, say — you must already be a member with permission to create repositories there, and this app cannot grant that. Ask whoever runs it." />
+          </TextBlock>
+
+          <TextBlock Style="{StaticResource H}" Text="The two words GitHub will use at you" />
+          <TextBlock Style="{StaticResource P}">
+            <Run Text="A " /><Run Text="repository" FontWeight="SemiBold" Foreground="#24292F" />
+            <Run Text=" is one folder of files with a name. Each course website gets its own. This app names them all L2W-… so they cannot be confused with anything else you keep on GitHub." />
+            <LineBreak />
+            <Run Text="GitHub " /><Run Text="Pages" FontWeight="SemiBold" Foreground="#24292F" />
+            <Run Text=" is the switch that turns such a folder into a real website. Until it is on, the files are there but no address shows them." />
+          </TextBlock>
+
+          <TextBlock Style="{StaticResource H}" Text="The address you will get" />
+          <TextBlock Style="{StaticResource P}"
+                     Text="https://YOUR-ACCOUNT.github.io/L2W-YOUR-COURSE/ — made from the two boxes in step 3. Anyone with the link can open it; there is no sign-in and no account needed to read it." />
+          <TextBlock Style="{StaticResource P}"
+                     Text="The first time, it takes a minute or two before the address works. Until then it shows a &quot;404&quot; page. That is normal — wait and reload." />
+
+          <TextBlock Style="{StaticResource H}" Text="The repository has to be public" />
+          <TextBlock Style="{StaticResource P}"
+                     Text="A website nobody can open is not a published website, so leave &quot;Private repository&quot; unticked." />
+          <TextBlock Style="{StaticResource P}" Foreground="{StaticResource Warn}"
+                     Text="Ticking it does not make the website private. A GitHub Pages site is public on the internet even when its repository is private — the setting hides the files, not the site. On a free account a private repository cannot publish a site at all, and restricting who may open a published site needs GitHub Enterprise Cloud. If the material must not be public, do not publish it here." />
+
+          <TextBlock Style="{StaticResource H}" Text="What goes on the web, and what does not" />
+          <TextBlock Style="{StaticResource P}"
+                     Text="Everything the export contained: pages, files, lecture slides, and quizzes with their answers marked. Treat a published course as visible to the whole world, because it is. If some of it should not be — an answer key, a licensed reading, a big deck — use &quot;Leave some files out of the publish&quot; in step 2, or take it out of the export before you start." />
+
+          <TextBlock Style="{StaticResource H}" Text="Two ways to publish" />
+          <TextBlock Style="{StaticResource P}">
+            <Run Text="With a token" FontWeight="SemiBold" Foreground="#24292F" />
+            <Run Text=" — a token is a long password you create on GitHub and paste in once, under &quot;GitHub token…&quot;. With one, the app does everything: it makes the repository, uploads the site and switches Pages on. The token is stored encrypted on this computer, for your Windows account only, and never travels with the website." />
+            <LineBreak /><LineBreak />
+            <Run Text="Without a token" FontWeight="SemiBold" Foreground="#24292F" />
+            <Run Text=" — the app uploads using Git, which asks you to sign in to GitHub the first time. You then switch Pages on yourself, once, per course. The app tells you exactly where when it finishes." />
+          </TextBlock>
+
+          <TextBlock Style="{StaticResource H}" Text="Switching Pages on by hand" />
+          <TextBlock Style="{StaticResource P}"
+                     Text="Only needed if you publish without a token, and only once per course:" />
+          <TextBlock Style="{StaticResource P}"
+                     Text="1. Open the repository on github.com.&#x0a;2. Settings (the tab along the top).&#x0a;3. Pages, down the left-hand side.&#x0a;4. Under Source choose &quot;Deploy from a branch&quot;.&#x0a;5. Branch: main, folder: / (root). Save.&#x0a;6. Wait a minute, then open the address." />
+
+          <TextBlock Style="{StaticResource H}" Text="Publishing again later" />
+          <TextBlock Style="{StaticResource P}"
+                     Text="Export the course again, build again, publish again. The site is replaced with the new one, at the same address, and you do not repeat any of the setting up. Anything you edited on GitHub by hand is replaced too — the folder on this computer is the original." />
+
+          <TextBlock Style="{StaticResource H}" Text="If it goes wrong" />
+          <TextBlock Style="{StaticResource P}"
+                     Text="The app writes what it did, step by step, in the box under Publish — it never hides a failure, and it never writes your token there. Most problems are one of three things: the address simply has not finished building yet; the account name is spelled differently from your GitHub account; or you do not have permission to publish into the account you named." />
+
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+  </DockPanel>
+</Window>

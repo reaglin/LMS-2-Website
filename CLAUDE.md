@@ -15,7 +15,7 @@ line through it: no AI, no course model, no project file.
 **Status: phases 0–4 built, 2026-09-14** (the day it was started). The conversion is verified
 against a real 135 MB Brightspace export of EGN3443 — 19 sections, 88 pages, 15 quizzes, 13
 discussions, 13 assignments — which becomes 149 pages and 25 files in about a second and a half.
-92 tests green. The window has been driven end-to-end (open a cartridge, build the site) through UI
+96 tests green. The window has been driven end-to-end (open a cartridge, build the site) through UI
 Automation. **The GitHub token route has never run against GitHub** — the Git route is tested
 against a local bare repository; the API half needs Ron's token and one real publish
 (`docs/MANUAL-TESTING.md`, test 5). Phase 5 is the Store.
@@ -49,7 +49,7 @@ LMS2Website.sln
 ├── src/Lms2Website.App/      net10.0-windows, WPF. Assembly name LMS2Website.
 │   MainWindow   three steps down one page, a busy strip at the bottom
 │   ViewModels/  MainViewModel (all the state), PreviewNode, RelayCommand, Converters
-│   Views/       TokenWindow
+│   Views/       TokenWindow, HelpWindow (publishing explained for a GitHub novice)
 ├── tests/Lms2Website.Tests/  xUnit: the reader, QTI, slugs, the site builder, publishing
 ├── samples/     demo-course.imscc (written by `--write-sample`)
 ├── docs/        the four files above
@@ -103,7 +103,12 @@ dotnet publish src/Lms2Website.App/Lms2Website.App.csproj -c Release -r win-x64 
    each excluded file on its page in the same pass. The folder on disk stays whole; only the push
    is trimmed. Git honours the file, and `GitHubApi.UploadFolderAsync` applies the rules itself,
    because it walks the folder rather than reading `.gitignore`.
-8. **The token never leaks.** DPAPI for the current user in `Documents\LMS 2 Website`; spliced onto
+8. **Nobody is told something comforting and wrong.** "Private repository" reads as "only my
+   students can see it", and that is false — GitHub Pages serves a site publicly even when its
+   repository is private, and restricting viewers needs Enterprise Cloud. `PublishWords` holds that
+   sentence once, the window and the publish log both use it, and `PublishWordsTests` fails if it
+   ever drifts back towards the comfortable version. The audience is assumed not to know GitHub.
+9. **The token never leaks.** DPAPI for the current user in `Documents\LMS 2 Website`; spliced onto
    the push URL for one push and taken back out of `.git/config` afterwards; `GitCli.Redact` runs
    over every line that reaches the log.
 

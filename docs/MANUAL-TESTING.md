@@ -224,3 +224,26 @@ Added 2026-09-15. The demo course carries `Lecture 1.pptx`, which is enough to s
 6. Publish a site that has exclusions (either route).
    - [ ] The pushed repository does not contain the excluded files.
    - [ ] No page on the published site has a download link that 404s.
+
+---
+
+## 8. What a newcomer sees
+
+Added 2026-09-15. Read these as though you had never used GitHub.
+
+1. Start the app with nothing loaded and press **New to GitHub?** in the header.
+   - [ ] It opens before any course is chosen — that is the point; step 3 is still greyed out.
+   - [ ] Nothing in it assumes you know what a repository, a branch or Pages is.
+   - [ ] The github.com/signup link opens in a browser.
+2. In step 3, before touching anything.
+   - [ ] The paragraph under the heading says what publishing does, that you need a free account
+         and permission, and that the repository must be public.
+3. Tick **Private repository**.
+   - [ ] A warning appears saying it does **not** make the website private, that a Pages site is
+         public even when its repository is not, that a free account cannot publish from a private
+         repository at all, and that restricting viewers needs GitHub Enterprise Cloud.
+   - [ ] Untick it: the warning goes.
+4. Publish without a token (hand-test 4) and read the next-steps box.
+   - [ ] It is a numbered list: open settings/pages, Source → Deploy from a branch, main / (root),
+         Save, wait a minute, open the address.
+   - [ ] Someone who has never done it could follow it without asking anybody.

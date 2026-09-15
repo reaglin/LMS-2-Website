@@ -17,7 +17,10 @@ public sealed class PublishRequest
     /// is never sent — so the rules have to be here too, not only in the file.
     /// </summary>
     public PublishRules Rules { get; init; } = PublishRules.None;
-    /// <summary>A private repository cannot serve GitHub Pages on a free plan.</summary>
+    /// <summary>
+    /// Make the repository private. It does not make the published site private — see
+    /// <see cref="PublishWords.PrivateDoesNotMeanHidden"/>, which is what the user is told.
+    /// </summary>
     public bool Private { get; init; }
     /// <summary>Create the repository when it is not there yet (token publishing only).</summary>
     public bool CreateIfMissing { get; init; } = true;
@@ -205,7 +208,7 @@ public static class Publisher
         }
 
         if (request.Private)
-            result.NextSteps.Add("The repository is private — GitHub Pages only serves private repositories on a paid plan.");
+            result.NextSteps.Add("The repository is private. " + PublishWords.PrivateDoesNotMeanHidden);
 
         progress?.Report((100, "Published"));
         return result;
@@ -248,9 +251,15 @@ public static class Publisher
 
         await GitCli.PublishAsync(request.SiteFolder, repoUrl, request.Branch, request.CommitMessage, log, ct);
 
-        result.NextSteps.Add($"Switch GitHub Pages on: {result.RepositoryUrl}/settings/pages → " +
-                             $"Source \"Deploy from a branch\" → {request.Branch} / (root). " +
-                             "Add a token in Settings and the app will do this for you next time.");
+        // Written for somebody who has not used GitHub before: one numbered pass, no jargon left
+        // unexplained, and the address said plainly at the end.
+        result.NextSteps.Add(
+            "The files are on GitHub. One thing left, and only once for this course — turn the website on:\n" +
+            $"  1. Open {result.RepositoryUrl}/settings/pages\n" +
+            "  2. Under \"Source\", choose \"Deploy from a branch\".\n" +
+            $"  3. Set the branch to {request.Branch} and the folder to / (root), then press Save.\n" +
+            $"  4. Wait a minute, then open {result.PagesUrl} — it shows a \"404\" page until the first build finishes.\n" +
+            "Save a GitHub token under \"GitHub token…\" and the app will do this part for you next time.");
         return result;
     }
 }

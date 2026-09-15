@@ -31,8 +31,12 @@
             <TextBlock Text="Turn a course export into a website, and put it on GitHub Pages."
                        Foreground="{StaticResource TextSoft}" FontSize="12" Margin="0,2,0,0" />
           </StackPanel>
-          <Button Content="GitHub token…" HorizontalAlignment="Right" VerticalAlignment="Center"
-                  Click="OnSettings" />
+          <!-- Both always reachable: step 3 is disabled until a site is built, and the help is
+               most wanted before that, not after. -->
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <Button Content="New to GitHub?" Click="OnHelp" />
+            <Button Content="GitHub token…" Margin="8,0,0,0" Click="OnSettings" />
+          </StackPanel>
         </Grid>
       </Border>
 
@@ -170,6 +174,9 @@
                 <TextBlock Text="Publish to GitHub Pages" Style="{StaticResource StepTitle}" />
               </StackPanel>
 
+              <TextBlock Style="{StaticResource Hint}" Margin="34,8,0,0" TextWrapping="Wrap"
+                         Text="This copies the finished website to GitHub, which stores and serves it for free, and gives you a web address anyone can open. You need a free GitHub account, and permission to publish into whichever account you name below. The repository must be public for anyone to see the site." />
+
               <TextBlock Text="{Binding TokenStatus}" Style="{StaticResource Hint}" Margin="34,8,0,0" />
 
               <Grid Margin="34,12,0,0">
@@ -197,8 +204,14 @@
                          TextWrapping="Wrap" Margin="34,6,0,0"
                          Visibility="{Binding PublishTarget, Converter={StaticResource ShowIfText}}" />
 
-              <CheckBox Content="Private repository (GitHub Pages then needs a paid plan)"
-                        IsChecked="{Binding IsPrivate}" Margin="34,10,0,0" Foreground="{StaticResource TextSoft}" />
+              <CheckBox Content="Private repository" IsChecked="{Binding IsPrivate}"
+                        Margin="34,10,0,0" Foreground="{StaticResource TextSoft}" />
+              <Border Margin="52,6,0,0" Padding="10,8" CornerRadius="6" Background="#FFF6E5"
+                      BorderBrush="{StaticResource Warn}" BorderThickness="1,0,0,0"
+                      Visibility="{Binding PrivateWarning, Converter={StaticResource ShowIfText}}">
+                <TextBlock Text="{Binding PrivateWarning, Mode=OneWay}" TextWrapping="Wrap"
+                           Foreground="{StaticResource Warn}" FontSize="12" />
+              </Border>
 
               <StackPanel Orientation="Horizontal" Margin="34,12,0,0">
                 <Button Content="Publish" Style="{StaticResource PrimaryButton}" Command="{Binding PublishCommand}" />

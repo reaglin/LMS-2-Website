@@ -336,7 +336,20 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public string Branch { get => _branch; set => Set(ref _branch, value); }
 
     private bool _isPrivate;
-    public bool IsPrivate { get => _isPrivate; set => Set(ref _isPrivate, value); }
+    public bool IsPrivate
+    {
+        get => _isPrivate;
+        set { if (Set(ref _isPrivate, value)) Raise(nameof(PrivateWarning)); }
+    }
+
+    /// <summary>
+    /// What ticking "private" actually does, which is not what the words suggest. A private
+    /// repository hides the <i>files</i>; the website built from them is still public — GitHub's
+    /// own wording is "GitHub Pages sites are publicly available on the internet, even if the
+    /// repository for the site is private". Someone publishing course material needs to know that
+    /// before they rely on it, not after.
+    /// </summary>
+    public string PrivateWarning => IsPrivate ? PublishWords.PrivateDoesNotMeanHidden : string.Empty;
 
     private string _publishLog = string.Empty;
     public string PublishLog { get => _publishLog; private set => Set(ref _publishLog, value); }

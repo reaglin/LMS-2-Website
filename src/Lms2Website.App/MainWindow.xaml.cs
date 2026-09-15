@@ -26,6 +26,9 @@ public partial class MainWindow : Window
         _model.RefreshTokenStatus();
     }
 
+    private void OnHelp(object sender, RoutedEventArgs e) =>
+        new HelpWindow { Owner = this }.ShowDialog();
+
     private void OnNavigate(object sender, RequestNavigateEventArgs e)
     {
         if (sender is Hyperlink link && link.NavigateUri != null)
