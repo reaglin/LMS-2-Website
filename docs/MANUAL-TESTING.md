@@ -85,7 +85,7 @@ first — start at **Make the token**.
 
 ### Already prepared and passing
 
-- `manual-test\LMS2Website.exe` rebuilt from the current tree; solution builds clean, 74 tests green.
+- `manual-test\LMS2Website.exe` rebuilt from the current tree; solution builds clean, 92 tests green.
 - The demo cartridge runs through that exact binary: 8 pages, 2 files, 0.2 s, `.nojekyll` and
   `l2w-site.json` written.
 - **Git 2.53.0** is on PATH, so the token route will push **with Git** — see *What this will not cover*.
