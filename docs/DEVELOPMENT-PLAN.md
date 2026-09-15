@@ -106,7 +106,7 @@ Statistle's `resources/STORE-SUBMISSION.md` is the template for the whole phase.
 | 6.1 | Tick boxes in the preview to leave sections or items out | The model already carries `Include`; only the view model work is missing |
 | 6.2 | A course home page written by the user (a paragraph above the section cards) | Right now the home page shows only the cartridge's own description |
 | 6.3 | Remember several courses and offer them on start-up | `SettingsStore.Recent()` already returns them |
-| 6.4 | Choose where a big deck goes: publish it, or link back to the LMS copy | A 135 MB site is mostly PowerPoint |
+| 6.4 | Leave files out of the **publish** with a `.gitignore` the app writes: everything over a size, and everything of a given type | Answer to question 2, 2026-09-15. A "side" option — the site on disk stays whole, only the push is trimmed. See the note under the questions for what it costs |
 | 6.5 | Canvas and Moodle exports hand-checked | Only Brightspace has been run through a real export |
 | 6.6 | An "unpublish" that empties the branch | Deleting a course site currently means doing it on github.com |
 | 6.7 | A setting for where sites are written: Documents (the default), a local drive, or a folder of the user's choosing | Answer to question 1 — Documents stays the default because that is where people look, but a machine whose Documents is a synced work OneDrive should be able to opt out. Not started: Ron wants to explore it first |
@@ -114,7 +114,7 @@ Statistle's `resources/STORE-SUBMISSION.md` is the template for the whole phase.
 
 ---
 
-## Open questions for Ron — 1 answered, 2 open (asked 2026-09-14)
+## Open questions for Ron — 2 answered, 1 open (asked 2026-09-14)
 
 1. ~~**Should the default output folder move off OneDrive?**~~ **Answered 2026-09-15: no — Documents
    stays.** It is where people will look for their data, and going to the folder directly is part of
@@ -126,6 +126,17 @@ Statistle's `resources/STORE-SUBMISSION.md` is the template for the whole phase.
    college tenant. Two things soften it — the deck opt-out in 6.4 would cut the bulk at its source
    (question 2), and the token could move to `%LOCALAPPDATA%` on its own (task 6.8) without
    touching where sites go, since nobody browses to the token.
-2. **The whole cartridge is published, decks and all.** For EGN3443 that is 134 MB of PowerPoint in
-   a public repository. Is that what you want, or should the decks be an opt-out (6.4)?
+2. ~~**Should the decks be an opt-out?**~~ **Answered 2026-09-15: yes, as a "side" option — a
+   `.gitignore` the app writes into the site folder,** with two kinds of rule: everything over a
+   given size, and everything of a given type. Task 6.4. Two things to settle before it is built:
+
+   - **A `.gitignore` trims the push, not the build.** The folder on disk keeps every file, so the
+     local site is whole; the published site is missing them, and the download links on its pages
+     point at files that are not there. That runs against "say what was lost" (`CLAUDE.md`, idea 2),
+     which is the reason this app never leaves a broken reference. Either the builder learns the
+     same rules and marks those items on the page, or the published site carries dead links by
+     design. **Open — see the question put to Ron.**
+   - **Only one of the two publish routes honours it.** `GitCli` runs `git add -A`, so a
+     `.gitignore` at the site root just works. `GitHubApi.UploadFolderAsync` walks the folder
+     itself and would upload the excluded files anyway, so it needs the same rules applied in code.
 3. **Which GitHub account** publishes the course sites — `reaglin`, or an organisation?
