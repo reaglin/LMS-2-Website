@@ -173,6 +173,10 @@
                 <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Branch, UpdateSourceTrigger=PropertyChanged}" />
               </Grid>
 
+              <TextBlock Text="{Binding PublishTarget, Mode=OneWay}" Style="{StaticResource Hint}"
+                         TextWrapping="Wrap" Margin="34,6,0,0"
+                         Visibility="{Binding PublishTarget, Converter={StaticResource ShowIfText}}" />
+
               <CheckBox Content="Private repository (GitHub Pages then needs a paid plan)"
                         IsChecked="{Binding IsPrivate}" Margin="34,10,0,0" Foreground="{StaticResource TextSoft}" />
 

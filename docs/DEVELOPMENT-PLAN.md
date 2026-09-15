@@ -71,6 +71,7 @@ phase 5 (the Store) and phase 6 (polish) are open.
 | 4.3 | `GitHubApi`: whoami, find/create repository, upload a folder, switch Pages on | ⚠ **Not yet run against GitHub** — needs Ron's token |
 | 4.4 | `Publisher`: token route, Git route, and the preflight size checks | ✅ Logic tested; the GitHub half rides on 4.3 |
 | 4.5 | Errors a person can act on (bad token, missing permission, rate limit, 100 MB file) | ✅ Written; the messages themselves are untested against real failures |
+| 4.6 | Every published site is marked as one: `L2W-` repository name, `lms-2-website` topic, "Built with LMS 2 Website" description, `l2w-site.json`, generator meta | ✅ 2026-09-15. `RepoName.Apply` is the one rule; the name is shown under the box before Publish. The prefix also makes it impossible to force-push a course site onto a hand-made repository |
 
 **Left to do:** one real publish with Ron's token. The runbook was **prepared 2026-09-15** and is
 ready to run as-is — `docs/MANUAL-TESTING.md`, test 5 — with the binary rebuilt from `9538f1f`, the

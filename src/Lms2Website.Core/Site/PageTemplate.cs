@@ -36,6 +36,8 @@ public sealed class PageTemplate
 
         sb.Append("<!DOCTYPE html>\n<html lang=\"en\" data-root=\"").Append(root).Append("\">\n<head>\n");
         sb.Append("<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n");
+        // The mark that says this page was generated, not written by hand.
+        sb.Append("<meta name=\"generator\" content=\"").Append(Html.Escape(L2W.Generator)).Append("\">\n");
         sb.Append("<title>").Append(Html.Escape(title == _course.Title ? title : $"{title} · {_course.Title}")).Append("</title>\n");
         sb.Append("<link rel=\"stylesheet\" href=\"").Append(root).Append(SiteAssets.StylesheetFileName).Append("\">\n");
         sb.Append("</head>\n<body>\n");

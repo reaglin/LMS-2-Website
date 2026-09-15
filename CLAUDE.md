@@ -15,7 +15,7 @@ line through it: no AI, no course model, no project file.
 **Status: phases 0–4 built, 2026-09-14** (the day it was started). The conversion is verified
 against a real 135 MB Brightspace export of EGN3443 — 19 sections, 88 pages, 15 quizzes, 13
 discussions, 13 assignments — which becomes 149 pages and 25 files in about a second and a half.
-61 tests green. The window has been driven end-to-end (open a cartridge, build the site) through UI
+74 tests green. The window has been driven end-to-end (open a cartridge, build the site) through UI
 Automation. **The GitHub token route has never run against GitHub** — the Git route is tested
 against a local bare repository; the API half needs Ron's token and one real publish
 (`docs/MANUAL-TESTING.md`, test 5). Phase 5 is the Store.
@@ -42,7 +42,8 @@ LMS2Website.sln
 │                ContentRewriter (LMS HTML → site HTML), SiteAssets (the CSS and JS as strings),
 │                Slug, Html
 │   Publish/     Publisher (picks the route), GitHubApi (REST), GitCli (the command line),
-│                TokenStore (DPAPI), ProjectSettings + SettingsStore
+│                TokenStore (DPAPI), RepoName (the L2W- rule), ProjectSettings + SettingsStore
+│   L2W.cs       the marks that say a repository and a folder were made by this app
 │   Samples/     SampleCartridge — the demo .imscc, and what the tests run against
 ├── src/Lms2Website.App/      net10.0-windows, WPF. Assembly name LMS2Website.
 │   MainWindow   three steps down one page, a busy strip at the bottom
@@ -89,7 +90,14 @@ dotnet publish src/Lms2Website.App/Lms2Website.App.csproj -c Release -r win-x64 
 5. **Token first, Git second.** With a token the app creates the repository, pushes and switches
    Pages on; the transfer still goes through Git when Git is installed, because a course with
    lecture decks is 100 MB+. Without a token it is a plain push and the user switches Pages on.
-6. **The token never leaks.** DPAPI for the current user in `Documents\LMS 2 Website`; spliced onto
+6. **A generated site says so, in four places.** The repository is named `L2W-<course>`, carries
+   the `lms-2-website` topic and says "Built with LMS 2 Website" in its description; the site root
+   holds `l2w-site.json`; every page carries `<meta name="generator">`. The prefix is the
+   load-bearing one — publishing is a force-push and the name is proposed from the course title, so
+   without it a course called EGN3443 would aim straight at the real `reaglin/EGN3443`.
+   `RepoName.Apply` is the single rule: applied to the proposed name and again at publish, shown
+   under the box beforehand, and it never doubles the prefix.
+7. **The token never leaks.** DPAPI for the current user in `Documents\LMS 2 Website`; spliced onto
    the push URL for one push and taken back out of `.git/config` afterwards; `GitCli.Redact` runs
    over every line that reaches the log.
 

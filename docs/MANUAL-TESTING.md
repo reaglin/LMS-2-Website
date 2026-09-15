@@ -65,10 +65,13 @@ Use a `.imscc` from Brightspace (`C:\Users\ronal\Downloads\D2LCCExport_*.imscc`)
 
 ## 4. Publish with Git only (no token)
 
-Needs Git for Windows and a repository you have already made on github.com.
+Needs Git for Windows and a repository you have already made on github.com. **Make it with the
+`L2W-` prefix** (e.g. `L2W-demo-course`) — the app puts the prefix on either way, so a repository
+named without it is simply never pushed to.
 
 1. Remove any saved token (**GitHub token…** → Remove).
 2. Fill in the account and repository, press **Publish**.
+   - [ ] The line under the box showed the prefixed name before you pressed it.
    - [ ] The log shows init, add, commit, push.
    - [ ] The next-steps line tells you to switch Pages on, with the settings URL.
    - [ ] No token or password appears anywhere in the log.
@@ -82,11 +85,12 @@ first — start at **Make the token**.
 
 ### Already prepared and passing
 
-- `manual-test\LMS2Website.exe` rebuilt from commit `9538f1f`; solution builds clean, 61/61 tests green.
-- The demo cartridge runs through that exact binary: 8 pages, 2 files, 0.2 s, `.nojekyll` written.
+- `manual-test\LMS2Website.exe` rebuilt from the current tree; solution builds clean, 74 tests green.
+- The demo cartridge runs through that exact binary: 8 pages, 2 files, 0.2 s, `.nojekyll` and
+  `l2w-site.json` written.
 - **Git 2.53.0** is on PATH, so the token route will push **with Git** — see *What this will not cover*.
 - No token is saved and no project settings exist yet, so step 2 starts from clean.
-- `reaglin/lms2website-handtest` does not exist — the name in step 3 is free.
+- Nothing under `reaglin` is named `L2W-…`, so the name in step 3 is free.
 
 ### Where the app keeps things on this machine
 
@@ -111,7 +115,7 @@ but it does sync into the Daytona State tenant. So does the built site — that 
 
   | Permission | Access | Why it is needed |
   |---|---|---|
-  | Administration | Read and write | `POST /user/repos` — creating the repository |
+  | Administration | Read and write | `POST /user/repos` — creating the repository, and setting its topic |
   | Contents | Read and write | the push |
   | Pages | Read and write | switching Pages on |
 
@@ -124,37 +128,49 @@ Use `samples\demo-course.imscc`. It is 64 KB built, so a failure costs seconds, 
 course material before open question 2 is settled.
 
 1. Start `manual-test\LMS2Website.exe`, drop the demo cartridge on it, press **Build website**.
+   - [ ] The Repository box already reads `L2W-demo-course`, and the line under it says where it goes.
 2. **GitHub token…** → paste → **Check and save**.
    - [ ] It reports `reaglin`.
    - [ ] The token is then shown masked (`gith…abcd`), never in full.
-3. Repository `lms2website-handtest`, branch `main`, **not** private. Press **Publish**.
-   - [ ] The log says "Creating reaglin/lms2website-handtest…".
+3. Type `lms2website-handtest` over the repository name, branch `main`, **not** private.
+   - [ ] The line under the box now says it publishes to `L2W-lms2website-handtest`, and explains
+         why. Press **Publish** and the box itself changes to the prefixed name.
+4. Watch the log.
+   - [ ] "Creating reaglin/L2W-lms2website-handtest…".
    - [ ] It pushes with Git 2.53.0, then reports Pages serving `main`.
    - [ ] **No token text anywhere in the log** — every URL is redacted.
-   - [ ] `https://reaglin.github.io/lms2website-handtest/` appears in the window.
-4. Wait a minute or two — the first Pages build 404s until it finishes — then open that address.
+   - [ ] `https://reaglin.github.io/L2W-lms2website-handtest/` appears in the window.
+5. Wait a minute or two — the first Pages build 404s until it finishes — then open that address.
    - [ ] The site works from the Pages URL: section menu, search, and `files/lecture-1.pptx`.
-5. Check the token did not stay behind in the site folder's repo:
+6. Look at the repository on github.com.
+   - [ ] It carries the **`lms-2-website`** topic.
+   - [ ] Its description ends "Built with LMS 2 Website."
+   - [ ] `l2w-site.json` is in the root, and the README says hand edits are lost on the next publish.
+   - [ ] View source on any page: `<meta name="generator" content="LMS 2 Website 0.1.0">`.
+7. Check the token did not stay behind in the site folder's repo:
 
    ```powershell
    git -C "$([Environment]::GetFolderPath('MyDocuments'))\LMS 2 Website\sites\demo-course" config --get remote.origin.url
    ```
 
    - [ ] The URL has no token in it.
-6. Rebuild the site and publish again.
+8. Rebuild the site and publish again.
    - [ ] The second publish replaces the branch and the site updates.
-7. Try it wrong on purpose, with a second token missing the permission in question:
+   - [ ] The topic is still there and has not been duplicated.
+9. Try it wrong on purpose, with a second token missing the permission in question:
    - [ ] No Pages permission → the site still uploads, and the app says to switch Pages on by hand.
    - [ ] A revoked token → "GitHub did not accept the token".
    - [ ] Owner set to an account that is not yours → "the app can only create repositories under
          your own account".
+   - [ ] No Administration permission → the publish still succeeds and the log says only that the
+         topic could not be set.
 
-### ⚠ One thing not to do
+### Why the name is prefixed
 
-**Do not type `egn3443` as the repository name.** `reaglin/EGN3443` already exists — it is the course
-repo Statistle follows — and publishing is `git push --force` onto the branch, so it would overwrite
-it. The real export's own default is harmless: its course title is *Prob and Stats for
-Engineers_521F_FA26_ON*, so the app proposes `prob-and-stats-for-engineers-521f-fa26-on`.
+`reaglin/EGN3443` is a real repository and publishing is `git push --force` onto a branch, so a
+course site that proposed the name `EGN3443` would overwrite it. Since 2026-09-15 every published
+site is named `L2W-<course>`: the prefix is put on at publish time, shown under the box first, and
+cannot be doubled. Typing `EGN3443` now produces `L2W-EGN3443`.
 
 ### What this will not cover
 
@@ -171,8 +187,8 @@ $env:PATH = $saved
 
 ### Afterwards
 
-Delete the throwaway repository (`github.com/reaglin/lms2website-handtest/settings`, bottom of the
-page), or keep it if the published demo is worth showing. Then tick task 4.3 in
+Delete the throwaway repository (`github.com/reaglin/L2W-lms2website-handtest/settings`, bottom of
+the page), or keep it if the published demo is worth showing. Then tick task 4.3 in
 `docs/DEVELOPMENT-PLAN.md` and update the status line in `CLAUDE.md`.
 
 ## 6. The window itself

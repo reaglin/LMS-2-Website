@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using Lms2Website.Core;
 using Lms2Website.Core.Cartridge;
 using Lms2Website.Core.Model;
 using Lms2Website.Core.Publish;
@@ -241,10 +242,36 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public RelayCommand OpenPagesCommand { get; }
 
     private string _owner = string.Empty;
-    public string Owner { get => _owner; set => Set(ref _owner, value); }
+    public string Owner
+    {
+        get => _owner;
+        set { if (Set(ref _owner, value)) Raise(nameof(PublishTarget)); }
+    }
 
     private string _repository = string.Empty;
-    public string Repository { get => _repository; set => Set(ref _repository, value); }
+    public string Repository
+    {
+        get => _repository;
+        set { if (Set(ref _repository, value)) Raise(nameof(PublishTarget)); }
+    }
+
+    /// <summary>
+    /// The repository this will actually land in, shown under the box so the L2W- prefix is
+    /// never a surprise at the moment of pressing Publish.
+    /// </summary>
+    public string PublishTarget
+    {
+        get
+        {
+            var repository = RepoName.Apply(Repository);
+            if (repository.Length == 0) return string.Empty;
+            var owner = Owner.Trim();
+            var full = owner.Length == 0 ? repository : $"{owner}/{repository}";
+            return RepoName.HasPrefix(Repository)
+                ? $"Publishes to {full}."
+                : $"Publishes to {full} — course sites are always named {L2W.RepoPrefix}… so they cannot land on a repository you made by hand.";
+        }
+    }
 
     private string _branch = "main";
     public string Branch { get => _branch; set => Set(ref _branch, value); }
@@ -309,11 +336,14 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
         try
         {
+            // Settle the name before anything is sent, and show the user what it became.
+            Repository = RepoName.Apply(Repository);
+
             var request = new PublishRequest
             {
                 SiteFolder    = OutputFolder,
                 Owner         = Owner.Trim(),
-                Repository    = Repository.Trim(),
+                Repository    = Repository,
                 Branch        = string.IsNullOrWhiteSpace(Branch) ? "main" : Branch.Trim(),
                 CommitMessage = $"Publish {CourseTitle} — {DateTime.Now:d MMMM yyyy HH:mm}",
                 Description   = $"Course website for {CourseTitle}, converted from an LMS export.",

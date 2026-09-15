@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Lms2Website.Core;
 using Lms2Website.Core.Cartridge;
 using Lms2Website.Core.Model;
 using Lms2Website.Core.Site;
@@ -180,5 +182,46 @@ public class SiteBuilderTests : IDisposable
 
         Assert.False(File.Exists(Path.Combine(_output, "stale.html")));
         Assert.True(File.Exists(Path.Combine(_output, ".git", "HEAD")));
+    }
+
+    [Fact]
+    public void EveryPageSaysWhatGeneratedIt()
+    {
+        BuildSite();
+
+        foreach (var page in new[] { "index.html", "01-week-1-getting-started/index.html" })
+            Assert.Contains($"<meta name=\"generator\" content=\"{L2W.Generator}\">", Read(page), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void TheSiteRootCarriesTheMarkerFileThatNamesItAnL2WSite()
+    {
+        var (course, result) = BuildSite();
+
+        var path = Path.Combine(_output, L2W.MarkerFileName);
+        Assert.True(File.Exists(path), $"{L2W.MarkerFileName} should mark a generated site");
+
+        using var json = JsonDocument.Parse(File.ReadAllText(path));
+        var root = json.RootElement;
+        Assert.Equal(L2W.Product, root.GetProperty("Generator").GetString());
+        Assert.Equal(L2W.Version, root.GetProperty("Version").GetString());
+        Assert.Equal(course.Title, root.GetProperty("Course").GetString());
+        Assert.Equal(result.PagesWritten, root.GetProperty("Pages").GetInt32());
+        Assert.Equal(result.FilesCopied, root.GetProperty("Files").GetInt32());
+
+        // A timestamp a script can parse, and no trace of the machine that built it.
+        Assert.EndsWith("Z", root.GetProperty("BuiltUtc").GetString()!, StringComparison.Ordinal);
+        Assert.DoesNotContain(Environment.UserName, File.ReadAllText(path), StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void TheReadmeWarnsThatHandEditsAreLostOnTheNextPublish()
+    {
+        BuildSite();
+
+        var readme = Read("README.md");
+        Assert.Contains(L2W.Topic, readme, StringComparison.Ordinal);
+        Assert.Contains(L2W.MarkerFileName, readme, StringComparison.Ordinal);
+        Assert.Contains("lost on the next publish", readme, StringComparison.Ordinal);
     }
 }
