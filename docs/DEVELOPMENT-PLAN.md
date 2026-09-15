@@ -1,0 +1,114 @@
+# LMS-2-Website — development plan
+
+Numbered tasks per phase, each with what "done" means. Phases 0–4 were built on **2026-09-14**;
+phase 5 (the Store) and phase 6 (polish) are open.
+
+---
+
+## Phase 0 — the repository ✅ 2026-09-14
+
+| # | Task | Done when |
+|---|---|---|
+| 0.1 | Solution, `Directory.Build.props`, `.gitignore` | ✅ `dotnet build` clean with `TreatWarningsAsErrors` |
+| 0.2 | `Lms2Website.Core` (net10.0) and `Lms2Website.App` (net10.0-windows, WPF) | ✅ |
+| 0.3 | xUnit test project | ✅ |
+| 0.4 | `docs/PLAN.md`, this file | ✅ |
+
+---
+
+## Phase 1 — read the cartridge ✅ 2026-09-14
+
+| # | Task | Done when |
+|---|---|---|
+| 1.1 | `CcPackage`: open the zip, resolve manifest hrefs through the LMS's quirks | ✅ Resolves Brightspace's `page.html;/Display Name.html` and its Cyrillic `сontent/` folder |
+| 1.2 | `CcManifestReader`: CC 1.0–1.3 and plain IMS CP, namespace-agnostic | ✅ |
+| 1.3 | `CcResourceReaders`: web links, LTI links, assignments, discussions | ✅ Bodies kept as HTML |
+| 1.4 | `QtiReader`: QTI 1.2 into read-only questions with the answer key | ✅ Multiple choice, true/false, multi-select, short answer, essay, matching |
+| 1.5 | `CartridgeReader`: the organization tree → sections, items, slugs | ✅ Nested folders become headings inside a section |
+| 1.6 | Tests against a synthetic cartridge carrying the real quirks | ✅ `SampleCartridge` + 13 tests |
+
+**Verified on a real export:** `D2LCCExport_511555_EGN3443…imscc` (135 MB, 167 entries) reads in
+0.2 s as 19 sections · 88 pages · 15 quizzes · 13 discussions · 13 assignments, no warnings.
+
+---
+
+## Phase 2 — build the website ✅ 2026-09-14
+
+| # | Task | Done when |
+|---|---|---|
+| 2.1 | `SiteAssets`: the stylesheet and script, self-contained, light and dark | ✅ No CDN, no web fonts |
+| 2.2 | `PageTemplate`: header, section menu, breadcrumb, previous/next | ✅ |
+| 2.3 | `ContentRewriter`: strip the LMS's scripts and stylesheets, repoint every reference | ✅ Page-to-page links survive; LMS links are marked; a missing image says so |
+| 2.4 | `SiteBuilder`: item pages, section pages, home page, files, search index | ✅ |
+| 2.5 | Quiz, assignment, discussion and file pages | ✅ Answers marked; "handed in through the LMS" said plainly |
+| 2.6 | Client-side search with no server | ✅ `assets/search-index.js`, works from `file://` |
+| 2.7 | Rebuild in place keeps `.git` | ✅ Tested |
+
+**Verified on the same export:** 149 pages, 25 files, 134 MB, 1.4 s.
+
+---
+
+## Phase 3 — the window ✅ 2026-09-14
+
+| # | Task | Done when |
+|---|---|---|
+| 3.1 | Three steps down one window, with a busy strip and Cancel | ✅ |
+| 3.2 | Step 1: choose or drop a cartridge; editable course title; preview tree | ✅ |
+| 3.3 | Step 2: output folder, Build, Open in browser, Open folder | ✅ Driven end-to-end through UI Automation |
+| 3.4 | Step 3: account, repository, branch, private, Publish | ✅ Built; see phase 4 for what is untested |
+| 3.5 | Token window: paste, check against GitHub, save, remove | ✅ |
+| 3.6 | Remember each course's folder and repository between runs | ✅ `Documents\LMS 2 Website\projects\<slug>.json` |
+| 3.7 | `--convert` and `--write-sample` command lines | ✅ |
+
+---
+
+## Phase 4 — publish ✅ code complete, part hand-test pending
+
+| # | Task | Done when |
+|---|---|---|
+| 4.1 | `TokenStore`: DPAPI, current user | ✅ |
+| 4.2 | `GitCli`: init → commit → force-push, token on the URL for one push only | ✅ Tested against a local bare repository |
+| 4.3 | `GitHubApi`: whoami, find/create repository, upload a folder, switch Pages on | ⚠ **Not yet run against GitHub** — needs Ron's token |
+| 4.4 | `Publisher`: token route, Git route, and the preflight size checks | ✅ Logic tested; the GitHub half rides on 4.3 |
+| 4.5 | Errors a person can act on (bad token, missing permission, rate limit, 100 MB file) | ✅ Written; the messages themselves are untested against real failures |
+
+**Left to do:** one real publish with Ron's token (see `docs/MANUAL-TESTING.md`, test 5). Until
+that has happened, the token route is code, not a verified feature.
+
+---
+
+## Phase 5 — the Microsoft Store ⬜
+
+| # | Task | Done when |
+|---|---|---|
+| 5.1 | App icon and tiles from artwork Ron provides | A 2048×2048 source image exists in `resources/` |
+| 5.2 | Port `packaging/` from Statistle (`pack.ps1`, `make-msixupload.ps1`, `run-wack.ps1`, `make-store-assets.ps1`, Inno Setup installer) | A signed dev MSIX installs on this machine |
+| 5.3 | `AppxManifest.xml` with the identity Partner Center reserves | PFN matches the reservation |
+| 5.4 | Privacy page on PunchMonkeyServer (`/privacy/lms2website`) | Live, names the app and Dean Eaglin |
+| 5.5 | WACK, listing copy, screenshots, submit | WACK passes; `resources/STORE-SUBMISSION.md` complete |
+
+Statistle's `resources/STORE-SUBMISSION.md` is the template for the whole phase.
+
+---
+
+## Phase 6 — the things worth doing next ⬜
+
+| # | Task | Why |
+|---|---|---|
+| 6.1 | Tick boxes in the preview to leave sections or items out | The model already carries `Include`; only the view model work is missing |
+| 6.2 | A course home page written by the user (a paragraph above the section cards) | Right now the home page shows only the cartridge's own description |
+| 6.3 | Remember several courses and offer them on start-up | `SettingsStore.Recent()` already returns them |
+| 6.4 | Choose where a big deck goes: publish it, or link back to the LMS copy | A 135 MB site is mostly PowerPoint |
+| 6.5 | Canvas and Moodle exports hand-checked | Only Brightspace has been run through a real export |
+| 6.6 | An "unpublish" that empties the branch | Deleting a course site currently means doing it on github.com |
+
+---
+
+## Open questions for Ron
+
+1. **The default output folder is `Documents\LMS 2 Website\sites\<course>`**, which on this machine
+   is inside OneDrive — a 135 MB course site will sync to OneDrive and to Daytona State. Should the
+   default move to `%LOCALAPPDATA%`, or is syncing wanted?
+2. **The whole cartridge is published, decks and all.** For EGN3443 that is 134 MB of PowerPoint in
+   a public repository. Is that what you want, or should the decks be an opt-out (6.4)?
+3. **Which GitHub account** publishes the course sites — `reaglin`, or an organisation?

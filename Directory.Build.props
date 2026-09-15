@@ -1,0 +1,30 @@
+<Project>
+
+  <!-- Shared settings for LMS-2-Website (src/, tests/, packaging/). -->
+
+  <PropertyGroup>
+    <!-- One version property. packaging/pack.ps1 reads it for the MSIX identity. -->
+    <Lms2WebsiteVersion>0.1.0</Lms2WebsiteVersion>
+    <Version>$(Lms2WebsiteVersion)</Version>
+    <AssemblyVersion>$(Lms2WebsiteVersion).0</AssemblyVersion>
+    <FileVersion>$(Lms2WebsiteVersion).0</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Company>Ron Eaglin</Company>
+    <Product>LMS 2 Website</Product>
+    <Copyright>Copyright © Ron Eaglin</Copyright>
+    <RepositoryUrl>https://github.com/reaglin/LMS-2-Website</RepositoryUrl>
+  </PropertyGroup>
+
+</Project>

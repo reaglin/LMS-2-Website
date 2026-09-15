@@ -1,0 +1,206 @@
+<Window x:Class="Lms2Website.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Lms2Website.App.ViewModels"
+        Title="LMS 2 Website" Height="820" Width="1000" MinHeight="560" MinWidth="720"
+        Background="{StaticResource Page}"
+        WindowStartupLocation="CenterScreen"
+        AllowDrop="True" Drop="OnDrop" DragOver="OnDragOver">
+
+  <Window.Resources>
+    <BooleanToVisibilityConverter x:Key="Show" />
+
+    <HierarchicalDataTemplate DataType="{x:Type vm:PreviewNode}" ItemsSource="{Binding Children}">
+      <StackPanel Orientation="Horizontal" Margin="0,1">
+        <TextBlock Text="{Binding Title}" FontWeight="{Binding IsSection, Converter={StaticResource BoldIfSection}}" />
+        <TextBlock Text="{Binding Detail}" Margin="10,0,0,0" Foreground="{StaticResource TextSoft}" FontSize="11"
+                   VerticalAlignment="Center" />
+      </StackPanel>
+    </HierarchicalDataTemplate>
+  </Window.Resources>
+
+  <Grid>
+    <DockPanel>
+
+      <!-- header -->
+      <Border DockPanel.Dock="Top" Background="White" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1"
+              Padding="20,12">
+        <Grid>
+          <StackPanel>
+            <TextBlock Text="LMS 2 Website" FontSize="18" FontWeight="SemiBold" />
+            <TextBlock Text="Turn a course export into a website, and put it on GitHub Pages."
+                       Foreground="{StaticResource TextSoft}" FontSize="12" Margin="0,2,0,0" />
+          </StackPanel>
+          <Button Content="GitHub token…" HorizontalAlignment="Right" VerticalAlignment="Center"
+                  Click="OnSettings" />
+        </Grid>
+      </Border>
+
+      <!-- busy strip -->
+      <Border DockPanel.Dock="Bottom" Background="White" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0"
+              Padding="20,10" Visibility="{Binding IsBusy, Converter={StaticResource Show}}">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          <StackPanel>
+            <TextBlock Text="{Binding BusyMessage}" TextTrimming="CharacterEllipsis" />
+            <ProgressBar Height="4" Margin="0,6,0,0" Minimum="0" Maximum="100" Value="{Binding Progress, Mode=OneWay}"
+                         Foreground="{StaticResource Accent}" BorderThickness="0" Background="#E6E9EE" />
+          </StackPanel>
+          <Button Grid.Column="1" Content="Cancel" Margin="16,0,0,0" Command="{Binding CancelCommand}" />
+        </Grid>
+      </Border>
+
+      <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="20,16">
+        <StackPanel MaxWidth="860">
+
+          <!-- ── 1. the export ─────────────────────────────────────────── -->
+          <Border Style="{StaticResource CardBorder}">
+            <StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <Border Style="{StaticResource StepNumber}">
+                  <TextBlock Text="1" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" />
+                </Border>
+                <TextBlock Text="Choose the LMS export" Style="{StaticResource StepTitle}" />
+              </StackPanel>
+
+              <Grid Margin="34,10,0,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{Binding SourcePath, Mode=OneWay}" IsReadOnly="True"
+                         Background="#FAFBFC" Foreground="{StaticResource TextSoft}" />
+                <Button Grid.Column="1" Content="Choose…" Margin="8,0,0,0" Command="{Binding ChooseSourceCommand}" />
+              </Grid>
+              <TextBlock Style="{StaticResource Hint}" Margin="34,6,0,0"
+                         Text="An .imscc file exported from Brightspace, Canvas, Moodle or Blackboard — or drop one on this window." />
+
+              <StackPanel Margin="34,12,0,0" Visibility="{Binding HasCourse, Converter={StaticResource Show}}">
+                <TextBlock Text="Course title" Style="{StaticResource FieldLabel}" />
+                <TextBox Text="{Binding CourseTitle, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Text="{Binding CourseSummary}" Margin="0,8,0,0" Foreground="{StaticResource TextSoft}" />
+
+                <Expander Header="What the website will contain" Margin="0,12,0,0" IsExpanded="True">
+                  <Border BorderBrush="{StaticResource Line}" BorderThickness="1" CornerRadius="6" Margin="0,6,0,0">
+                    <TreeView ItemsSource="{Binding Preview}" MaxHeight="300" BorderThickness="0"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                      <TreeView.ItemContainerStyle>
+                        <Style TargetType="TreeViewItem">
+                          <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=OneTime}" />
+                        </Style>
+                      </TreeView.ItemContainerStyle>
+                    </TreeView>
+                  </Border>
+                </Expander>
+
+                <TextBlock Text="{Binding ReadWarnings}" Foreground="{StaticResource Warn}" Margin="0,10,0,0"
+                           Visibility="{Binding ReadWarnings, Converter={StaticResource ShowIfText}}" />
+              </StackPanel>
+            </StackPanel>
+          </Border>
+
+          <!-- ── 2. the website ────────────────────────────────────────── -->
+          <Border Style="{StaticResource CardBorder}" IsEnabled="{Binding HasCourse}">
+            <StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <Border Style="{StaticResource StepNumber}">
+                  <TextBlock Text="2" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" />
+                </Border>
+                <TextBlock Text="Build the website" Style="{StaticResource StepTitle}" />
+              </StackPanel>
+
+              <Grid Margin="34,10,0,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox Text="{Binding OutputFolder, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Grid.Column="1" Content="Change…" Margin="8,0,0,0" Command="{Binding ChooseOutputCommand}" />
+              </Grid>
+              <TextBlock Style="{StaticResource Hint}" Margin="34,6,0,0"
+                         Text="The folder is emptied and rebuilt each time (a .git folder inside it is kept)." />
+
+              <StackPanel Orientation="Horizontal" Margin="34,12,0,0">
+                <Button Content="Build website" Style="{StaticResource PrimaryButton}" Command="{Binding BuildCommand}" />
+                <Button Content="Open in browser" Margin="8,0,0,0" Command="{Binding OpenSiteCommand}" />
+                <Button Content="Open folder" Margin="8,0,0,0" Command="{Binding OpenFolderCommand}" />
+              </StackPanel>
+
+              <TextBlock Text="{Binding BuildResult}" Margin="34,10,0,0" Foreground="{StaticResource Good}"
+                         Visibility="{Binding BuildResult, Converter={StaticResource ShowIfText}}" />
+              <Expander Header="Notes from the conversion" Margin="34,8,0,0"
+                        Visibility="{Binding BuildWarnings, Converter={StaticResource ShowIfText}}">
+                <TextBox Text="{Binding BuildWarnings, Mode=OneWay}" IsReadOnly="True" MaxHeight="200"
+                         VerticalScrollBarVisibility="Auto" BorderThickness="0" Background="#FAFBFC"
+                         Foreground="{StaticResource TextSoft}" TextWrapping="Wrap" Margin="0,6,0,0" />
+              </Expander>
+            </StackPanel>
+          </Border>
+
+          <!-- ── 3. GitHub ─────────────────────────────────────────────── -->
+          <Border Style="{StaticResource CardBorder}" IsEnabled="{Binding SiteBuilt}">
+            <StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <Border Style="{StaticResource StepNumber}">
+                  <TextBlock Text="3" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" />
+                </Border>
+                <TextBlock Text="Publish to GitHub Pages" Style="{StaticResource StepTitle}" />
+              </StackPanel>
+
+              <TextBlock Text="{Binding TokenStatus}" Style="{StaticResource Hint}" Margin="34,8,0,0" />
+
+              <Grid Margin="34,12,0,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="1.2*" />
+                  <ColumnDefinition Width="1.6*" />
+                  <ColumnDefinition Width="0.8*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="GitHub account" Style="{StaticResource FieldLabel}" />
+                <TextBox Grid.Row="1" Text="{Binding Owner, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,0" />
+
+                <TextBlock Grid.Column="1" Text="Repository" Style="{StaticResource FieldLabel}" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Repository, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,0" />
+
+                <TextBlock Grid.Column="2" Text="Branch" Style="{StaticResource FieldLabel}" />
+                <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Branch, UpdateSourceTrigger=PropertyChanged}" />
+              </Grid>
+
+              <CheckBox Content="Private repository (GitHub Pages then needs a paid plan)"
+                        IsChecked="{Binding IsPrivate}" Margin="34,10,0,0" Foreground="{StaticResource TextSoft}" />
+
+              <StackPanel Orientation="Horizontal" Margin="34,12,0,0">
+                <Button Content="Publish" Style="{StaticResource PrimaryButton}" Command="{Binding PublishCommand}" />
+                <Button Content="Open the site" Margin="8,0,0,0" Command="{Binding OpenPagesCommand}" />
+              </StackPanel>
+
+              <TextBlock Margin="34,12,0,0" Visibility="{Binding PagesUrl, Converter={StaticResource ShowIfText}}">
+                <Run Text="Address:" Foreground="{StaticResource TextSoft}" />
+                <Hyperlink NavigateUri="{Binding PagesUrl}" RequestNavigate="OnNavigate">
+                  <Run Text="{Binding PagesUrl, Mode=OneWay}" />
+                </Hyperlink>
+              </TextBlock>
+              <TextBlock Text="{Binding NextSteps}" Margin="34,8,0,0" Foreground="{StaticResource Warn}"
+                         Visibility="{Binding NextSteps, Converter={StaticResource ShowIfText}}" />
+
+              <Expander Header="Details" Margin="34,10,0,0"
+                        Visibility="{Binding PublishLog, Converter={StaticResource ShowIfText}}">
+                <TextBox Text="{Binding PublishLog, Mode=OneWay}" IsReadOnly="True" MaxHeight="220" Margin="0,6,0,0"
+                         VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="11"
+                         BorderThickness="0" Background="#FAFBFC" Foreground="{StaticResource TextSoft}" />
+              </Expander>
+            </StackPanel>
+          </Border>
+
+        </StackPanel>
+      </ScrollViewer>
+    </DockPanel>
+  </Grid>
+</Window>

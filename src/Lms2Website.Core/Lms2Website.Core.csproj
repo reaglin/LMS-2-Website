@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- AngleSharp (MIT): parses the LMS's HTML, which is rarely well-formed, and lets the
+         site builder rewrite in-cartridge links without regexes. -->
+    <PackageReference Include="AngleSharp" Version="1.7.2" />
+    <!-- DPAPI, for the GitHub token: encrypted for the signed-in Windows user. -->
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The path and reference helpers are internal to Core; the tests pin their behaviour. -->
+    <InternalsVisibleTo Include="Lms2Website.Tests" />
+  </ItemGroup>
+
+</Project>
