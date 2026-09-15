@@ -26,12 +26,15 @@ public sealed class ProjectSettings
     public int ExcludeOverMb { get; set; }
     /// <summary>Types kept out of the publish, as the user typed them (".pptx, .zip").</summary>
     public string ExcludeTypes { get; set; } = string.Empty;
+    /// <summary>Leave the quizzes out of the website entirely — their answers are in them.</summary>
+    public bool ExcludeQuizzes { get; set; }
 
     /// <summary>The two settings above as the rules the builder and the publisher both use.</summary>
     public PublishRules Rules() => new()
     {
         MaxBytes   = ExcludeOverMb > 0 ? ExcludeOverMb * 1024L * 1024L : 0,
-        Extensions = PublishRules.ParseExtensions(ExcludeTypes)
+        Extensions = PublishRules.ParseExtensions(ExcludeTypes),
+        ExcludeQuizzes = ExcludeQuizzes
     };
 
     public DateTime? LastBuiltUtc     { get; set; }

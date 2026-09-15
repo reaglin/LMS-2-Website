@@ -23,10 +23,22 @@ public sealed class PublishRules
     /// <summary>Extensions that are built but not published, each stored as ".pptx".</summary>
     public IReadOnlyList<string> Extensions { get; init; } = [];
 
+    /// <summary>
+    /// Leave the quizzes out altogether. Unlike the two file rules, a quiz is not written at all
+    /// rather than written and then kept out of the push — a quiz page carries the answer key, and
+    /// the safest place for an answer key is nowhere near the folder that gets pushed. Nothing
+    /// links to a quiz that was never built, so no page is left pointing at a page that is missing.
+    /// </summary>
+    public bool ExcludeQuizzes { get; init; }
+
     /// <summary>Publish everything.</summary>
     public static PublishRules None { get; } = new();
 
+    /// <summary>True when any file rule applies — the quiz rule is handled before files exist.</summary>
     public bool Any => MaxBytes > 0 || Extensions.Count > 0;
+
+    /// <summary>True when the rules change the site in any way at all.</summary>
+    public bool AnyAtAll => Any || ExcludeQuizzes;
 
     /// <summary>
     /// Why this file is not published, phrased for the page it appears on — or null to publish it.
@@ -67,6 +79,31 @@ public sealed class PublishRules
         return found;
     }
 
+    /// <summary>
+    /// Hides the quizzes for the length of a build, and gives back the undo. Every part of the
+    /// site — the menu, the section lists, the pager, the search index, the pages themselves —
+    /// already reads <c>Include</c>, so clearing it is enough to make a quiz vanish consistently,
+    /// with nothing left pointing at it. The flag belongs to the caller's course object, which
+    /// outlives the build, so it is always put back.
+    /// </summary>
+    public static IDisposable HideQuizzes(Model.CourseSite course)
+    {
+        var hidden = course.AllItems
+            .Where(i => i.Kind == Model.ItemKind.Quiz && i.Include)
+            .ToList();
+
+        foreach (var quiz in hidden) quiz.Include = false;
+        return new Restore(hidden);
+    }
+
+    private sealed class Restore(List<Model.SiteItem> hidden) : IDisposable
+    {
+        public void Dispose()
+        {
+            foreach (var quiz in hidden) quiz.Include = true;
+        }
+    }
+
     /// <summary>"25 MB", for the sentence on the page and the header of the .gitignore.</summary>
     public static string Megabytes(long bytes) =>
         (bytes / (1024d * 1024d)).ToString("0.##", CultureInfo.InvariantCulture) + " MB";
@@ -77,6 +114,7 @@ public sealed class PublishRules
         var parts = new List<string>();
         if (MaxBytes > 0) parts.Add($"nothing over {Megabytes(MaxBytes)}");
         if (Extensions.Count > 0) parts.Add("no " + string.Join(", ", Extensions));
+        if (ExcludeQuizzes) parts.Add("no quizzes");
         return parts.Count == 0 ? "everything is published" : string.Join("; ", parts);
     }
 }

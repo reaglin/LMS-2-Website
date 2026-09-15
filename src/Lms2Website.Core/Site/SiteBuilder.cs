@@ -36,6 +36,9 @@ public sealed class SiteBuildResult
 
     /// <summary>Bytes of everything in <see cref="NotPublished"/>.</summary>
     public long NotPublishedBytes { get; set; }
+
+    /// <summary>Quizzes left out of the site entirely, because their answers are in them.</summary>
+    public int QuizzesLeftOut { get; set; }
 }
 
 /// <summary>
@@ -90,6 +93,17 @@ public static class SiteBuilder
         CancellationToken ct = default)
     {
         var stopwatch = Stopwatch.StartNew();
+
+        // Before anything is counted or written: a quiz that is not published is not built either,
+        // because the answer key is in it. Put back when the build ends, however it ends — the
+        // course object belongs to the caller.
+        var quizzesHidden = options.Rules.ExcludeQuizzes
+            ? course.AllItems.Count(i => i.Kind == ItemKind.Quiz && i.Include)
+            : 0;
+        using var restoreQuizzes = options.Rules.ExcludeQuizzes
+            ? PublishRules.HideQuizzes(course)
+            : null;
+
         var output = Path.GetFullPath(options.OutputFolder);
         var result = new SiteBuildResult
         {
@@ -207,6 +221,14 @@ public static class SiteBuilder
                 $"{result.NotPublished.Count} file(s), {Html.FileSize(result.NotPublishedBytes)}, are in this folder " +
                 $"but will not be published ({options.Rules.Describe()}). Each is named on its own page, and " +
                 ".gitignore keeps them out of the push.");
+        }
+
+        if (quizzesHidden > 0)
+        {
+            result.QuizzesLeftOut = quizzesHidden;
+            result.Warnings.Add(
+                $"{quizzesHidden} quiz(zes) were left out of the website altogether, answers and all. " +
+                "They are not in this folder, so there is nothing here to publish by accident.");
         }
 
         result.Warnings.AddRange(course.Warnings);

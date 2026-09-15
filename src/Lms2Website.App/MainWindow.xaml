@@ -142,6 +142,9 @@
                   <TextBox Text="{Binding ExcludeTypes, UpdateSourceTrigger=PropertyChanged}"
                            Width="180" Margin="8,0,0,0" ToolTip=".pptx, .zip, .mp4 — commas or spaces" />
                 </StackPanel>
+                <CheckBox Content="Quizzes — they contain the answers" IsChecked="{Binding ExcludeQuizzes}"
+                          Margin="0,8,0,0" Foreground="{StaticResource TextSoft}"
+                          ToolTip="A quiz is left out of the website altogether, not merely kept out of the push." />
                 <TextBlock Text="{Binding ExcludeSummary, Mode=OneWay}" Style="{StaticResource Hint}"
                            TextWrapping="Wrap" Margin="0,6,0,0"
                            Visibility="{Binding ExcludeSummary, Converter={StaticResource ShowIfText}}" />

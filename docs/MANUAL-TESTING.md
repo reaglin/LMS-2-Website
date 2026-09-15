@@ -85,7 +85,7 @@ first — start at **Make the token**.
 
 ### Already prepared and passing
 
-- `manual-test\LMS2Website.exe` rebuilt from the current tree; solution builds clean, 92 tests green.
+- `manual-test\LMS2Website.exe` rebuilt from the current tree; solution builds clean, 103 tests green.
 - The demo cartridge runs through that exact binary: 8 pages, 2 files, 0.2 s, `.nojekyll` and
   `l2w-site.json` written.
 - **Git 2.53.0** is on PATH, so the token route will push **with Git** — see *What this will not cover*.
@@ -98,12 +98,12 @@ first — start at **Make the token**.
 
 | What | Where |
 |---|---|
-| Token (DPAPI, current user) | `C:\Users\ronal\OneDrive - Daytona State College\Documents\LMS 2 Website\github-token.dat` |
+| Token (DPAPI, current user) | `C:\Users\ronal\AppData\Local\LMS 2 Website\github-token.dat` — moved out of Documents 2026-09-15 (task 6.8), so it no longer syncs to the college tenant |
 | Per-course settings | `…\LMS 2 Website\projects\<slug>.json` |
 | Default output folder | `…\LMS 2 Website\sites\<slug>` |
 
-The token blob is encrypted for this Windows user and is useless on any other machine or account,
-but it does sync into the Daytona State tenant. So does the built site — that is open question 1.
+The built site still syncs into the Daytona State tenant, which is deliberate — Documents is where
+people look for their own work (question 1). The token no longer does.
 
 ### Make the token
 
@@ -221,8 +221,16 @@ Added 2026-09-15. The demo course carries `Lecture 1.pptx`, which is enough to s
 5. Now use a size instead: tick the box, clear **Types**, put `1` in **Bigger than**, build.
    - [ ] `.gitignore` lists the individual files rather than a pattern — git cannot match on size.
    - [ ] Every affected page says "over the 1 MB limit set for this site".
-6. Publish a site that has exclusions (either route).
-   - [ ] The pushed repository does not contain the excluded files.
+6. Tick **Quizzes — they contain the answers** and build again.
+   - [ ] The page count drops by the number of quizzes in the course.
+   - [ ] There is **no quiz page anywhere in the folder** — not written, not merely ignored.
+   - [ ] The section page no longer lists the quiz, the menu does not show it, and searching the
+         site for its title finds nothing.
+   - [ ] **Notes from the conversion** says how many quizzes were left out.
+   - [ ] No answer key survives in the folder:
+         `Select-String -Path <folder>\* -Recurse -Pattern "Answer:"` finds nothing.
+7. Publish a site that has exclusions (either route).
+   - [ ] The pushed repository does not contain the excluded files or any quiz.
    - [ ] No page on the published site has a download link that 404s.
 
 ---
@@ -235,15 +243,20 @@ Added 2026-09-15. Read these as though you had never used GitHub.
    - [ ] It opens before any course is chosen — that is the point; step 3 is still greyed out.
    - [ ] Nothing in it assumes you know what a repository, a branch or Pages is.
    - [ ] The github.com/signup link opens in a browser.
-2. In step 3, before touching anything.
+2. Read "The repository and the website are two different things".
+   - [ ] It is clear afterwards that the repository is the files and Pages is the website, that the
+         two have separate visibility, and that a private repository can still serve a public site.
+   - [ ] "Keeping something off the web" names all three ways — size, type, quizzes — and says that
+         quizzes are not written at all.
+3. In step 3, before touching anything.
    - [ ] The paragraph under the heading says what publishing does, that you need a free account
          and permission, and that the repository must be public.
-3. Tick **Private repository**.
+4. Tick **Private repository**.
    - [ ] A warning appears saying it does **not** make the website private, that a Pages site is
          public even when its repository is not, that a free account cannot publish from a private
          repository at all, and that restricting viewers needs GitHub Enterprise Cloud.
    - [ ] Untick it: the warning goes.
-4. Publish without a token (hand-test 4) and read the next-steps box.
+5. Publish without a token (hand-test 4) and read the next-steps box.
    - [ ] It is a numbered list: open settings/pages, Source → Deploy from a branch, main / (root),
          Save, wait a minute, open the address.
    - [ ] Someone who has never done it could follow it without asking anybody.

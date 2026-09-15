@@ -50,13 +50,17 @@
             <Run Text="• Permission to publish into whatever account or organisation you type in the GitHub account box. Your own account always works. If you type somebody else's — a department, say — you must already be a member with permission to create repositories there, and this app cannot grant that. Ask whoever runs it." />
           </TextBlock>
 
-          <TextBlock Style="{StaticResource H}" Text="The two words GitHub will use at you" />
+          <TextBlock Style="{StaticResource H}" Text="The repository and the website are two different things" />
           <TextBlock Style="{StaticResource P}">
-            <Run Text="A " /><Run Text="repository" FontWeight="SemiBold" Foreground="#24292F" />
-            <Run Text=" is one folder of files with a name. Each course website gets its own. This app names them all L2W-… so they cannot be confused with anything else you keep on GitHub." />
-            <LineBreak />
-            <Run Text="GitHub " /><Run Text="Pages" FontWeight="SemiBold" Foreground="#24292F" />
-            <Run Text=" is the switch that turns such a folder into a real website. Until it is on, the files are there but no address shows them." />
+            <Run Text="This is the one distinction worth getting straight, because the rest follows from it." />
+            <LineBreak /><LineBreak />
+            <Run Text="The repository" FontWeight="SemiBold" Foreground="#24292F" />
+            <Run Text=" is the folder of files, stored on GitHub. It has a name — this app calls them all L2W-… so they cannot be confused with anything else you keep there — and it has its own privacy setting." />
+            <LineBreak /><LineBreak />
+            <Run Text="Pages" FontWeight="SemiBold" Foreground="#24292F" />
+            <Run Text=" is the website GitHub builds out of that folder and serves at a web address. It is a separate thing with its own visibility, and by default that visibility is: everyone." />
+            <LineBreak /><LineBreak />
+            <Run Text="So a file can be in a private repository and still be on the open web, because the website built from it is public. That is the trap in the next section." />
           </TextBlock>
 
           <TextBlock Style="{StaticResource H}" Text="The address you will get" />
@@ -65,15 +69,29 @@
           <TextBlock Style="{StaticResource P}"
                      Text="The first time, it takes a minute or two before the address works. Until then it shows a &quot;404&quot; page. That is normal — wait and reload." />
 
-          <TextBlock Style="{StaticResource H}" Text="The repository has to be public" />
+          <TextBlock Style="{StaticResource H}" Text="Leave &quot;Private repository&quot; unticked" />
           <TextBlock Style="{StaticResource P}"
-                     Text="A website nobody can open is not a published website, so leave &quot;Private repository&quot; unticked." />
+                     Text="A website nobody can open is not a published website, so the repository should be public — and ticking &quot;private&quot; does not do what the word suggests anyway." />
           <TextBlock Style="{StaticResource P}" Foreground="{StaticResource Warn}"
                      Text="Ticking it does not make the website private. A GitHub Pages site is public on the internet even when its repository is private — the setting hides the files, not the site. On a free account a private repository cannot publish a site at all, and restricting who may open a published site needs GitHub Enterprise Cloud. If the material must not be public, do not publish it here." />
 
-          <TextBlock Style="{StaticResource H}" Text="What goes on the web, and what does not" />
+          <TextBlock Style="{StaticResource H}" Text="Keeping something off the web" />
           <TextBlock Style="{StaticResource P}"
-                     Text="Everything the export contained: pages, files, lecture slides, and quizzes with their answers marked. Treat a published course as visible to the whole world, because it is. If some of it should not be — an answer key, a licensed reading, a big deck — use &quot;Leave some files out of the publish&quot; in step 2, or take it out of the export before you start." />
+                     Text="By default the website contains everything the export did: pages, files, lecture slides, and quizzes with their answers marked. Treat a published course as visible to the whole world, because it is. Marking the repository private does not change that — see above." />
+          <TextBlock Style="{StaticResource P}"
+                     Text="The way to keep something off the web is to keep it out of the website, in step 2, under &quot;Leave some files out of the publish&quot;. There are three:" />
+          <TextBlock Style="{StaticResource P}">
+            <Run Text="• Bigger than … MB" FontWeight="SemiBold" Foreground="#24292F" />
+            <Run Text=" — for lecture decks and videos, which are usually most of a course's size." />
+            <LineBreak />
+            <Run Text="• Types" FontWeight="SemiBold" Foreground="#24292F" />
+            <Run Text=" — .pptx, .zip, .mp4, whatever you name. Every file of that kind is left out." />
+            <LineBreak />
+            <Run Text="• Quizzes" FontWeight="SemiBold" Foreground="#24292F" />
+            <Run Text=" — the answers are in them, so this one goes furthest: the quiz is not written into the website at all, rather than written and then held back." />
+          </TextBlock>
+          <TextBlock Style="{StaticResource P}"
+                     Text="Excluded files stay in the folder on this computer, so you keep a complete copy; the app writes a .gitignore that keeps them out of what is sent, and every page that would have linked to one says so plainly instead of offering a download that fails. Anything you are unsure about, take out of the export before you start." />
 
           <TextBlock Style="{StaticResource H}" Text="Two ways to publish" />
           <TextBlock Style="{StaticResource P}">

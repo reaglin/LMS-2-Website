@@ -107,7 +107,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
             PagesUrl     = _project.PagesUrl;
             ExcludeOverMb = _project.ExcludeOverMb > 0 ? _project.ExcludeOverMb.ToString() : string.Empty;
             ExcludeTypes  = _project.ExcludeTypes;
-            ExcludeFiles  = _project.ExcludeOverMb > 0 || _project.ExcludeTypes.Trim().Length > 0;
+            ExcludeQuizzes = _project.ExcludeQuizzes;
+            ExcludeFiles  = _project.ExcludeOverMb > 0 || _project.ExcludeTypes.Trim().Length > 0
+                            || _project.ExcludeQuizzes;
 
             SiteBuilt   = false;
             BuildResult = string.Empty;
@@ -198,6 +200,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
             _project.OutputFolder  = folder;
             _project.ExcludeOverMb = ExcludeFiles ? ParseMb(ExcludeOverMb) : 0;
             _project.ExcludeTypes  = ExcludeFiles ? ExcludeTypes.Trim() : string.Empty;
+            _project.ExcludeQuizzes = ExcludeFiles && ExcludeQuizzes;
             _project.LastBuiltUtc  = DateTime.UtcNow;
             _project.CourseTitle   = course.Title;
             SettingsStore.Save(_project);
@@ -265,6 +268,14 @@ public sealed class MainViewModel : INotifyPropertyChanged
         set { if (Set(ref _excludeOverMb, value)) Raise(nameof(ExcludeSummary)); }
     }
 
+    private bool _excludeQuizzes;
+    /// <summary>Leave the quizzes out of the website entirely — the answer key is in them.</summary>
+    public bool ExcludeQuizzes
+    {
+        get => _excludeQuizzes;
+        set { if (Set(ref _excludeQuizzes, value)) Raise(nameof(ExcludeSummary)); }
+    }
+
     private string _excludeTypes = string.Empty;
     /// <summary>Types, as typed: "pptx, .zip mp4" all mean the same thing.</summary>
     public string ExcludeTypes
@@ -280,10 +291,15 @@ public sealed class MainViewModel : INotifyPropertyChanged
         {
             if (!ExcludeFiles) return string.Empty;
             var rules = CurrentRules();
-            return rules.Any
-                ? $"Kept out of the publish: {rules.Describe()}. They stay in the folder on this computer, " +
-                  "and each one is named on its own page. Build again to apply a change."
-                : "Nothing is excluded yet — set a size, a list of types, or both.";
+            if (!rules.AnyAtAll)
+                return "Nothing is excluded yet — set a size, a list of types, tick quizzes, or any of them.";
+
+            var text = $"Kept out of the publish: {rules.Describe()}. ";
+            if (rules.Any)
+                text += "Excluded files stay in the folder on this computer and are named on their own page. ";
+            if (rules.ExcludeQuizzes)
+                text += "Quizzes are not written at all, so no answer key reaches the folder. ";
+            return text + "Build again to apply a change.";
         }
     }
 
@@ -291,8 +307,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private PublishRules CurrentRules() => ExcludeFiles
         ? new PublishRules
         {
-            MaxBytes   = ParseMb(ExcludeOverMb) * 1024L * 1024L,
-            Extensions = PublishRules.ParseExtensions(ExcludeTypes)
+            MaxBytes       = ParseMb(ExcludeOverMb) * 1024L * 1024L,
+            Extensions     = PublishRules.ParseExtensions(ExcludeTypes),
+            ExcludeQuizzes = ExcludeQuizzes
         }
         : PublishRules.None;
 

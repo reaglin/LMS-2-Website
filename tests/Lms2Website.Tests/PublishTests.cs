@@ -134,4 +134,23 @@ public class PublishTests
         try { Directory.Delete(folder, true); } catch (IOException) { }
         catch (UnauthorizedAccessException) { }
     }
+
+    /// <summary>
+    /// The token is a machine-local secret, so it lives in %LOCALAPPDATA% — not beside the sites in
+    /// Documents, which on a managed machine is often a synced company OneDrive. Reading it is not
+    /// tested here: that would mean touching the real user's real token.
+    /// </summary>
+    [Fact]
+    public void TheTokenLivesInLocalAppDataAndNotInDocuments()
+    {
+        var local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+        Assert.StartsWith(local, TokenStore.Folder, StringComparison.OrdinalIgnoreCase);
+        Assert.EndsWith("github-token.dat", TokenStore.TokenPath, StringComparison.Ordinal);
+        Assert.DoesNotContain(documents, TokenStore.TokenPath, StringComparison.OrdinalIgnoreCase);
+
+        // the sites, by contrast, stay where the user will look for them
+        Assert.StartsWith(documents, SettingsStore.Folder, StringComparison.OrdinalIgnoreCase);
+    }
 }
