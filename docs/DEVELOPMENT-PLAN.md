@@ -72,8 +72,15 @@ phase 5 (the Store) and phase 6 (polish) are open.
 | 4.4 | `Publisher`: token route, Git route, and the preflight size checks | ✅ Logic tested; the GitHub half rides on 4.3 |
 | 4.5 | Errors a person can act on (bad token, missing permission, rate limit, 100 MB file) | ✅ Written; the messages themselves are untested against real failures |
 
-**Left to do:** one real publish with Ron's token (see `docs/MANUAL-TESTING.md`, test 5). Until
-that has happened, the token route is code, not a verified feature.
+**Left to do:** one real publish with Ron's token. The runbook was **prepared 2026-09-15** and is
+ready to run as-is — `docs/MANUAL-TESTING.md`, test 5 — with the binary rebuilt from `9538f1f`, the
+exact fine-grained token permissions (Administration + Contents + Pages, all read/write, scoped to
+all repositories), and a free repository name.  Until it has run, the token route is code, not a
+verified feature.
+
+Git is installed on this machine, so the token route pushes with Git and
+`GitHubApi.UploadFolderAsync` is **not** exercised by test 5; test 5 carries a recipe for covering
+it separately.
 
 ---
 
@@ -104,11 +111,13 @@ Statistle's `resources/STORE-SUBMISSION.md` is the template for the whole phase.
 
 ---
 
-## Open questions for Ron
+## Open questions for Ron — awaiting answers (asked 2026-09-14, still open 2026-09-15)
 
-1. **The default output folder is `Documents\LMS 2 Website\sites\<course>`**, which on this machine
-   is inside OneDrive — a 135 MB course site will sync to OneDrive and to Daytona State. Should the
-   default move to `%LOCALAPPDATA%`, or is syncing wanted?
+1. **The default output folder is `Documents\LMS 2 Website\sites\<course>`.** Confirmed 2026-09-15:
+   `MyDocuments` here resolves to `C:\Users\ronal\OneDrive - Daytona State College\Documents`, so a
+   135 MB course site — and the DPAPI token blob — sync into the **college** tenant, not a personal
+   OneDrive. The token is useless off this machine; the site is just bulk. Should the default move
+   to `%LOCALAPPDATA%`, or is syncing wanted?
 2. **The whole cartridge is published, decks and all.** For EGN3443 that is 134 MB of PowerPoint in
    a public repository. Is that what you want, or should the decks be an opt-out (6.4)?
 3. **Which GitHub account** publishes the course sites — `reaglin`, or an organisation?
