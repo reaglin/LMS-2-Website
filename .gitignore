@@ -135,8 +135,10 @@ DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
 
-# Click-Once directory
-publish/
+# Click-Once directory. Anchored to the repository root on purpose: unanchored, and matched
+# case-insensitively on Windows, "publish/" also swallowed src/Lms2Website.Core/Publish/ --
+# the whole publishing layer -- and kept it out of the first commit.
+/publish/
 
 # Publish Web Output
 *.[Pp]ublish.xml
