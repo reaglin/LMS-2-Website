@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Lms2Website.Core.Site;
 
 namespace Lms2Website.Core.Publish;
 
@@ -92,11 +93,12 @@ public sealed class GitHubApi : IDisposable
     /// </summary>
     public async Task UploadFolderAsync(
         string owner, string repo, string branch, string folder, string message,
+        PublishRules? rules = null,
         IProgress<(int Percent, string Message)>? progress = null, CancellationToken ct = default)
     {
-        var files = Directory.GetFiles(folder, "*", SearchOption.AllDirectories)
-                             .Where(f => !f.Replace('\\', '/').Contains("/.git/", StringComparison.Ordinal))
-                             .ToList();
+        // Git would read the .gitignore the builder wrote; this route walks the folder itself, so
+        // it has to apply the same rules or it would upload exactly what was meant to stay behind.
+        var files = Publisher.PublishableFiles(folder, rules).ToList();
 
         var tree = new List<object>(files.Count);
         for (int i = 0; i < files.Count; i++)

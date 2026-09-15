@@ -123,6 +123,26 @@
               <TextBlock Style="{StaticResource Hint}" Margin="34,6,0,0"
                          Text="The folder is emptied and rebuilt each time (a .git folder inside it is kept)." />
 
+              <CheckBox Content="Leave some files out of the publish" IsChecked="{Binding ExcludeFiles}"
+                        Margin="34,12,0,0" Foreground="{StaticResource TextSoft}" />
+              <StackPanel Margin="52,6,0,0"
+                          Visibility="{Binding ExcludeFiles, Converter={StaticResource Show}}">
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock Text="Bigger than" VerticalAlignment="Center" Foreground="{StaticResource TextSoft}" />
+                  <TextBox Text="{Binding ExcludeOverMb, UpdateSourceTrigger=PropertyChanged}"
+                           Width="56" Margin="8,0,0,0" />
+                  <TextBlock Text="MB" VerticalAlignment="Center" Margin="6,0,0,0"
+                             Foreground="{StaticResource TextSoft}" />
+                  <TextBlock Text="Types" VerticalAlignment="Center" Margin="20,0,0,0"
+                             Foreground="{StaticResource TextSoft}" />
+                  <TextBox Text="{Binding ExcludeTypes, UpdateSourceTrigger=PropertyChanged}"
+                           Width="180" Margin="8,0,0,0" ToolTip=".pptx, .zip, .mp4 — commas or spaces" />
+                </StackPanel>
+                <TextBlock Text="{Binding ExcludeSummary, Mode=OneWay}" Style="{StaticResource Hint}"
+                           TextWrapping="Wrap" Margin="0,6,0,0"
+                           Visibility="{Binding ExcludeSummary, Converter={StaticResource ShowIfText}}" />
+              </StackPanel>
+
               <StackPanel Orientation="Horizontal" Margin="34,12,0,0">
                 <Button Content="Build website" Style="{StaticResource PrimaryButton}" Command="{Binding BuildCommand}" />
                 <Button Content="Open in browser" Margin="8,0,0,0" Command="{Binding OpenSiteCommand}" />

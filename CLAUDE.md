@@ -15,7 +15,7 @@ line through it: no AI, no course model, no project file.
 **Status: phases 0–4 built, 2026-09-14** (the day it was started). The conversion is verified
 against a real 135 MB Brightspace export of EGN3443 — 19 sections, 88 pages, 15 quizzes, 13
 discussions, 13 assignments — which becomes 149 pages and 25 files in about a second and a half.
-74 tests green. The window has been driven end-to-end (open a cartridge, build the site) through UI
+92 tests green. The window has been driven end-to-end (open a cartridge, build the site) through UI
 Automation. **The GitHub token route has never run against GitHub** — the Git route is tested
 against a local bare repository; the API half needs Ron's token and one real publish
 (`docs/MANUAL-TESTING.md`, test 5). Phase 5 is the Store.
@@ -38,7 +38,8 @@ LMS2Website.sln
 │                CcResourceReaders (web links, LTI, assignments, discussions), QtiReader (quizzes,
 │                read-only, with the answer key), CartridgeReader (the whole course)
 │   Model/       CourseSite → SiteModule → SiteItem (+ QuizContent, SiteAsset, ItemKind)
-│   Site/        SiteBuilder (writes the folder), PageTemplate (the shell every page shares),
+│   Site/        SiteBuilder (writes the folder), PublishRules (what is built but not published),
+│                PageTemplate (the shell every page shares),
 │                ContentRewriter (LMS HTML → site HTML), SiteAssets (the CSS and JS as strings),
 │                Slug, Html
 │   Publish/     Publisher (picks the route), GitHubApi (REST), GitCli (the command line),
@@ -97,7 +98,12 @@ dotnet publish src/Lms2Website.App/Lms2Website.App.csproj -c Release -r win-x64 
    without it a course called EGN3443 would aim straight at the real `reaglin/EGN3443`.
    `RepoName.Apply` is the single rule: applied to the proposed name and again at publish, shown
    under the box beforehand, and it never doubles the prefix.
-7. **The token never leaks.** DPAPI for the current user in `Documents\LMS 2 Website`; spliced onto
+7. **What is not published says so where it would have been.** `PublishRules` (over a size, or of
+   a type) reaches the *builder*, not just the push — so the app writes the `.gitignore` and marks
+   each excluded file on its page in the same pass. The folder on disk stays whole; only the push
+   is trimmed. Git honours the file, and `GitHubApi.UploadFolderAsync` applies the rules itself,
+   because it walks the folder rather than reading `.gitignore`.
+8. **The token never leaks.** DPAPI for the current user in `Documents\LMS 2 Website`; spliced onto
    the push URL for one push and taken back out of `.git/config` afterwards; `GitCli.Redact` runs
    over every line that reaches the log.
 

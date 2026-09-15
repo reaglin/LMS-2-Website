@@ -106,15 +106,17 @@ Statistle's `resources/STORE-SUBMISSION.md` is the template for the whole phase.
 | 6.1 | Tick boxes in the preview to leave sections or items out | The model already carries `Include`; only the view model work is missing |
 | 6.2 | A course home page written by the user (a paragraph above the section cards) | Right now the home page shows only the cartridge's own description |
 | 6.3 | Remember several courses and offer them on start-up | `SettingsStore.Recent()` already returns them |
-| 6.4 | Leave files out of the **publish** with a `.gitignore` the app writes: everything over a size, and everything of a given type | Answer to question 2, 2026-09-15. A "side" option — the site on disk stays whole, only the push is trimmed. See the note under the questions for what it costs |
+| 6.4 | ~~Leave files out of the **publish**~~ ✅ **2026-09-15** | Answer to question 2. `PublishRules` (size and type) reaches the builder, so the app writes the `.gitignore` *and* marks every excluded file on its own page — no published page links to a file the site does not carry. The API upload path applies the same rules, and the size checks no longer count files that are never sent |
 | 6.5 | Canvas and Moodle exports hand-checked | Only Brightspace has been run through a real export |
 | 6.6 | An "unpublish" that empties the branch | Deleting a course site currently means doing it on github.com |
 | 6.7 | A setting for where sites are written: Documents (the default), a local drive, or a folder of the user's choosing | Answer to question 1 — Documents stays the default because that is where people look, but a machine whose Documents is a synced work OneDrive should be able to opt out. Not started: Ron wants to explore it first |
 | 6.8 | Move `github-token.dat` to `%LOCALAPPDATA%`, leaving sites in Documents | Falls out of question 1. The split is clean: sites are user data and belong where people browse, the token is a machine-local secret nobody navigates to. It is DPAPI-encrypted and useless off this machine, but it need not sit in the college tenant at all |
+| 6.9 | **Publishing, explained for someone who does not know GitHub** — in the window and in a help page: what an account and a repository are, that the repository must be **public** for anyone to see the site, the exact Pages setting and where it lives, and what to do when they do not have access to the place they are publishing to | Answer to question 3, 2026-09-15. The app already reports what it did; it does not yet teach someone who has never used GitHub what they are agreeing to |
+| 6.10 | Say plainly what "Private repository" costs — the site will not be visible at all without a paid plan — at the moment it is ticked rather than only in the label | Falls out of question 3: a public site is the whole point, so the one setting that silently defeats it should argue back |
 
 ---
 
-## Open questions for Ron — 2 answered, 1 open (asked 2026-09-14)
+## Open questions for Ron — all 3 answered (asked 2026-09-14, answered 2026-09-15)
 
 1. ~~**Should the default output folder move off OneDrive?**~~ **Answered 2026-09-15: no — Documents
    stays.** It is where people will look for their data, and going to the folder directly is part of
@@ -139,4 +141,12 @@ Statistle's `resources/STORE-SUBMISSION.md` is the template for the whole phase.
    - **Only one of the two publish routes honours it.** `GitCli` runs `git add -A`, so a
      `.gitignore` at the site root just works. `GitHubApi.UploadFolderAsync` walks the folder
      itself and would upload the excluded files anyway, so it needs the same rules applied in code.
-3. **Which GitHub account** publishes the course sites — `reaglin`, or an organisation?
+3. ~~**Which GitHub account** publishes the course sites?~~ **Answered 2026-09-15: whichever the user
+   says.** There is no fixed account or organisation — the person publishing names the place, and
+   they must already have access to it. Two things follow:
+
+   - **The repository has to be public.** A private one cannot serve Pages without a paid plan, and
+     a course site nobody can open is not a published course site. Task 6.10.
+   - **The audience does not know GitHub.** The app has to convey which settings are needed and how
+     to set them, in plain language, rather than assuming an account, a repository and Pages are
+     familiar words. Task 6.9.

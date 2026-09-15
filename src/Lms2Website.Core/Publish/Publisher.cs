@@ -11,6 +11,12 @@ public sealed class PublishRequest
     public string Branch { get; init; } = "main";
     public string CommitMessage { get; init; } = "Publish course website";
     public string Description { get; init; } = string.Empty;
+    /// <summary>
+    /// The same rules the site was built with. Git reads the .gitignore the builder wrote, but the
+    /// API upload walks the folder itself, and the size checks below should not count a file that
+    /// is never sent — so the rules have to be here too, not only in the file.
+    /// </summary>
+    public PublishRules Rules { get; init; } = PublishRules.None;
     /// <summary>A private repository cannot serve GitHub Pages on a free plan.</summary>
     public bool Private { get; init; }
     /// <summary>Create the repository when it is not there yet (token publishing only).</summary>
@@ -53,17 +59,34 @@ public static class Publisher
     /// <summary>Above this, uploading file by file through the API is too slow to be sensible.</summary>
     private const long ApiUploadLimit = 40L * 1024 * 1024;
 
+    /// <summary>
+    /// Every file under the site folder that a publish will actually send: never anything inside
+    /// .git, and never anything the rules exclude. One definition, so the size checks, the byte
+    /// count and the API upload cannot disagree about what is being published.
+    /// </summary>
+    public static IEnumerable<string> PublishableFiles(string siteFolder, PublishRules? rules = null)
+    {
+        if (!Directory.Exists(siteFolder)) yield break;
+
+        foreach (var file in Directory.EnumerateFiles(siteFolder, "*", SearchOption.AllDirectories))
+        {
+            if (file.Replace('\\', '/').Contains("/.git/", StringComparison.Ordinal)) continue;
+            if (rules is { Any: true } &&
+                rules.ExcludeReason(Path.GetFileName(file), new FileInfo(file).Length) != null) continue;
+            yield return file;
+        }
+    }
+
     /// <summary>What GitHub will object to, checked before anything is sent.</summary>
-    public static IReadOnlyList<PublishWarning> Preflight(string siteFolder)
+    public static IReadOnlyList<PublishWarning> Preflight(string siteFolder, PublishRules? rules = null)
     {
         var warnings = new List<PublishWarning>();
         if (!Directory.Exists(siteFolder))
             return [new PublishWarning("The site folder does not exist — build the website first.", true)];
 
         long total = 0;
-        foreach (var file in Directory.EnumerateFiles(siteFolder, "*", SearchOption.AllDirectories))
+        foreach (var file in PublishableFiles(siteFolder, rules))
         {
-            if (file.Replace('\\', '/').Contains("/.git/", StringComparison.Ordinal)) continue;
             var length = new FileInfo(file).Length;
             total += length;
             var name = Path.GetRelativePath(siteFolder, file);
@@ -79,19 +102,15 @@ public static class Publisher
         return warnings;
     }
 
-    /// <summary>Total bytes of the site, ignoring .git.</summary>
-    public static long SiteSize(string siteFolder) =>
-        Directory.Exists(siteFolder)
-            ? Directory.EnumerateFiles(siteFolder, "*", SearchOption.AllDirectories)
-                       .Where(f => !f.Replace('\\', '/').Contains("/.git/", StringComparison.Ordinal))
-                       .Sum(f => new FileInfo(f).Length)
-            : 0;
+    /// <summary>Total bytes the publish will actually send, ignoring .git and anything excluded.</summary>
+    public static long SiteSize(string siteFolder, PublishRules? rules = null) =>
+        PublishableFiles(siteFolder, rules).Sum(f => new FileInfo(f).Length);
 
     public static async Task<PublishResult> PublishAsync(
         PublishRequest request, string? token, Action<string> log,
         IProgress<(int Percent, string Message)>? progress = null, CancellationToken ct = default)
     {
-        foreach (var blocker in Preflight(request.SiteFolder).Where(w => w.Blocking))
+        foreach (var blocker in Preflight(request.SiteFolder, request.Rules).Where(w => w.Blocking))
             throw new InvalidOperationException(blocker.Message);
 
         return string.IsNullOrWhiteSpace(token)
@@ -140,7 +159,7 @@ public static class Publisher
         }
 
         var (gitInstalled, version) = await GitCli.CheckInstalledAsync(ct);
-        var size = SiteSize(request.SiteFolder);
+        var size = SiteSize(request.SiteFolder, request.Rules);
 
         if (gitInstalled)
         {
@@ -155,7 +174,7 @@ public static class Publisher
             log("Git is not installed — uploading through the GitHub API instead.");
             result.Method = "GitHub API";
             await api.UploadFolderAsync(owner, repo.Name, request.Branch, request.SiteFolder,
-                request.CommitMessage, progress, ct);
+                request.CommitMessage, request.Rules, progress, ct);
         }
         else
         {

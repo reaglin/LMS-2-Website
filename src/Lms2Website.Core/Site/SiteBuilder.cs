@@ -13,6 +13,8 @@ public sealed class SiteBuildOptions
     public required string OutputFolder { get; init; }
     /// <summary>Line at the foot of every page; the default names the tool and the date.</summary>
     public string? FooterNote { get; init; }
+    /// <summary>Which files are built but kept out of the publish. Default: none.</summary>
+    public PublishRules Rules { get; init; } = PublishRules.None;
 }
 
 public sealed class SiteBuildResult
@@ -24,6 +26,16 @@ public sealed class SiteBuildResult
     public long Bytes          { get; set; }
     public TimeSpan Elapsed    { get; set; }
     public List<string> Warnings { get; } = new();
+
+    /// <summary>
+    /// Files written into the folder but left out of the publish: site href → why, phrased for
+    /// the page. The pages read this so a published site never links to a file it does not carry.
+    /// </summary>
+    public Dictionary<string, string> NotPublished { get; } =
+        new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>Bytes of everything in <see cref="NotPublished"/>.</summary>
+    public long NotPublishedBytes { get; set; }
 }
 
 /// <summary>
@@ -120,7 +132,17 @@ public static class SiteBuilder
             pkg.ExtractTo(canonical, destination);
             copied[canonical] = siteHref;
             result.FilesCopied++;
-            result.Bytes += new FileInfo(destination).Length;
+
+            var length = new FileInfo(destination).Length;
+            result.Bytes += length;
+
+            // The one place a file enters the site, so the one place to judge it.
+            var reason = options.Rules.ExcludeReason(name, length);
+            if (reason != null)
+            {
+                result.NotPublished[siteHref] = reason;
+                result.NotPublishedBytes += length;
+            }
             return siteHref;
         }
 
@@ -173,6 +195,19 @@ public static class SiteBuilder
         // reading the repository) can tell it from a site somebody wrote by hand.
         File.WriteAllText(Path.Combine(output, L2W.MarkerFileName),
             JsonSerializer.Serialize(SiteMarker.For(course, result), MarkerJson) + "\n", new UTF8Encoding(false));
+
+        // Keep the excluded files out of the push. Written only when there is something to say,
+        // so a site with no rules carries no .gitignore at all.
+        if (result.NotPublished.Count > 0)
+        {
+            File.WriteAllText(Path.Combine(output, ".gitignore"),
+                GitIgnore(options.Rules, result), new UTF8Encoding(false));
+
+            result.Warnings.Add(
+                $"{result.NotPublished.Count} file(s), {Html.FileSize(result.NotPublishedBytes)}, are in this folder " +
+                $"but will not be published ({options.Rules.Describe()}). Each is named on its own page, and " +
+                ".gitignore keeps them out of the push.");
+        }
 
         result.Warnings.AddRange(course.Warnings);
         result.Elapsed = stopwatch.Elapsed;
@@ -245,6 +280,14 @@ public static class SiteBuilder
         var name = Path.GetFileName(asset!.SourceHref);
         var href = ContentRewriter.Relative(item.SiteHref[..(item.SiteHref.LastIndexOf('/') + 1)], siteHref);
         sb.Append("<p class=\"lede\">").Append(Html.Escape(name)).Append(" · ").Append(Html.FileSize(asset.Bytes)).Append("</p>\n");
+        // Not published: no download link, and no preview either — both would lead nowhere.
+        if (result.NotPublished.TryGetValue(siteHref, out var why))
+        {
+            sb.Append("<div class=\"note warn\">Not published — ").Append(Html.Escape(why))
+              .Append(". The file is in the copy of this site on the computer that built it.</div>\n");
+            return item.Title + " " + name;
+        }
+
         sb.Append("<p><a href=\"").Append(href).Append("\" download>Download this file</a></p>\n");
 
         var extension = Path.GetExtension(name).ToLowerInvariant();
@@ -343,9 +386,12 @@ public static class SiteBuilder
                 result.Warnings.Add($"\"{item.Title}\": attachment {asset.SourceHref} is not in the cartridge.");
                 continue;
             }
-            rows.Add($"<li><a href=\"{ContentRewriter.Relative(fromDir, siteHref)}\" download>" +
-                     $"{Html.Escape(Path.GetFileName(asset.SourceHref))}</a> " +
-                     $"<span class=\"size\">{Html.FileSize(asset.Bytes)}</span></li>");
+            var fileName = Html.Escape(Path.GetFileName(asset.SourceHref));
+            var size = $"<span class=\"size\">{Html.FileSize(asset.Bytes)}</span>";
+
+            rows.Add(result.NotPublished.TryGetValue(siteHref, out var why)
+                ? $"<li>{fileName} {size} <span class=\"unpublished\">Not published — {Html.Escape(why)}.</span></li>"
+                : $"<li><a href=\"{ContentRewriter.Relative(fromDir, siteHref)}\" download>{fileName}</a> {size}</li>");
         }
         if (rows.Count == 0) return;
 
@@ -440,6 +486,44 @@ public static class SiteBuilder
         }
         foreach (var file in Directory.GetFiles(output))
             File.Delete(file);
+    }
+
+    /// <summary>
+    /// The .gitignore that keeps the excluded files out of the push. A type rule is written as the
+    /// pattern it is (<c>*.pptx</c>); a size rule cannot be — git has no way to match on size — so
+    /// those files are listed one per line. Both are commented, because the person who finds this
+    /// file in their repository did not write it.
+    /// </summary>
+    private static string GitIgnore(PublishRules rules, SiteBuildResult result)
+    {
+        var sb = new StringBuilder(512);
+        sb.Append("# Written by ").Append(L2W.Product).Append(". These files are in the site folder\n");
+        sb.Append("# on the computer that built it, but are kept out of what gets published.\n");
+        sb.Append("# Rules: ").Append(rules.Describe()).Append('\n');
+        sb.Append("# Change them in the app and build again — this file is rewritten every time.\n");
+
+        if (rules.Extensions.Count > 0)
+        {
+            sb.Append("\n# by type\n");
+            foreach (var extension in rules.Extensions)
+                sb.Append('*').Append(extension).Append('\n');
+        }
+
+        // Anything the type patterns do not already cover — i.e. everything caught by size.
+        var bySize = result.NotPublished.Keys
+            .Where(href => !rules.Extensions.Any(e =>
+                       href.EndsWith(e, StringComparison.OrdinalIgnoreCase)))
+            .OrderBy(href => href, StringComparer.Ordinal)
+            .ToList();
+
+        if (bySize.Count > 0)
+        {
+            sb.Append("\n# too big to publish (git cannot match on size, so they are listed)\n");
+            foreach (var href in bySize)
+                sb.Append('/').Append(href).Append('\n');
+        }
+
+        return sb.ToString();
     }
 
     private static string Readme(CourseSite course, SiteBuildResult result) =>

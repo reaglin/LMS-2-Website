@@ -105,6 +105,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
             Branch       = string.IsNullOrWhiteSpace(_project.Branch) ? "main" : _project.Branch;
             IsPrivate    = _project.Private;
             PagesUrl     = _project.PagesUrl;
+            ExcludeOverMb = _project.ExcludeOverMb > 0 ? _project.ExcludeOverMb.ToString() : string.Empty;
+            ExcludeTypes  = _project.ExcludeTypes;
+            ExcludeFiles  = _project.ExcludeOverMb > 0 || _project.ExcludeTypes.Trim().Length > 0;
 
             SiteBuilt   = false;
             BuildResult = string.Empty;
@@ -179,17 +182,22 @@ public sealed class MainViewModel : INotifyPropertyChanged
                 BusyMessage = p.Message;
             });
 
+            var rules = CurrentRules();
             var result = await Task.Run(() => SiteBuilder.Build(
-                course, new SiteBuildOptions { OutputFolder = folder }, progress, _cancellation.Token));
+                course, new SiteBuildOptions { OutputFolder = folder, Rules = rules },
+                progress, _cancellation.Token));
 
             SiteBuilt = true;
             BuildResult = $"{result.PagesWritten} pages and {result.FilesCopied} files " +
-                          $"({Html.FileSize(Publisher.SiteSize(folder))}) in {result.Elapsed.TotalSeconds:0.0} seconds.";
+                          $"({Html.FileSize(Publisher.SiteSize(folder, rules))}{(result.NotPublished.Count > 0 ? " to publish" : string.Empty)})" +
+                          $" in {result.Elapsed.TotalSeconds:0.0} seconds.";
             BuildWarnings = result.Warnings.Count == 0
                 ? string.Empty
                 : $"{result.Warnings.Count} thing(s) worth knowing:\n• " + string.Join("\n• ", result.Warnings.Take(40));
 
             _project.OutputFolder  = folder;
+            _project.ExcludeOverMb = ExcludeFiles ? ParseMb(ExcludeOverMb) : 0;
+            _project.ExcludeTypes  = ExcludeFiles ? ExcludeTypes.Trim() : string.Empty;
             _project.LastBuiltUtc  = DateTime.UtcNow;
             _project.CourseTitle   = course.Title;
             SettingsStore.Save(_project);
@@ -240,6 +248,57 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
     public RelayCommand PublishCommand { get; }
     public RelayCommand OpenPagesCommand { get; }
+
+    private bool _excludeFiles;
+    /// <summary>Whether any file is kept out of the publish at all.</summary>
+    public bool ExcludeFiles
+    {
+        get => _excludeFiles;
+        set { if (Set(ref _excludeFiles, value)) Raise(nameof(ExcludeSummary)); }
+    }
+
+    private string _excludeOverMb = string.Empty;
+    /// <summary>Megabytes, as typed. Blank or unreadable means "no size rule".</summary>
+    public string ExcludeOverMb
+    {
+        get => _excludeOverMb;
+        set { if (Set(ref _excludeOverMb, value)) Raise(nameof(ExcludeSummary)); }
+    }
+
+    private string _excludeTypes = string.Empty;
+    /// <summary>Types, as typed: "pptx, .zip mp4" all mean the same thing.</summary>
+    public string ExcludeTypes
+    {
+        get => _excludeTypes;
+        set { if (Set(ref _excludeTypes, value)) Raise(nameof(ExcludeSummary)); }
+    }
+
+    /// <summary>What the rules add up to, in the words the site itself will use.</summary>
+    public string ExcludeSummary
+    {
+        get
+        {
+            if (!ExcludeFiles) return string.Empty;
+            var rules = CurrentRules();
+            return rules.Any
+                ? $"Kept out of the publish: {rules.Describe()}. They stay in the folder on this computer, " +
+                  "and each one is named on its own page. Build again to apply a change."
+                : "Nothing is excluded yet — set a size, a list of types, or both.";
+        }
+    }
+
+    /// <summary>The rules as they stand in the window right now.</summary>
+    private PublishRules CurrentRules() => ExcludeFiles
+        ? new PublishRules
+        {
+            MaxBytes   = ParseMb(ExcludeOverMb) * 1024L * 1024L,
+            Extensions = PublishRules.ParseExtensions(ExcludeTypes)
+        }
+        : PublishRules.None;
+
+    /// <summary>Whole megabytes, or 0 for anything that is not a positive number.</summary>
+    private static int ParseMb(string text) =>
+        int.TryParse(text.Trim(), out var mb) && mb > 0 ? mb : 0;
 
     private string _owner = string.Empty;
     public string Owner
@@ -305,7 +364,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public async Task PublishAsync()
     {
         var token = TokenStore.Load();
-        var warnings = Publisher.Preflight(OutputFolder);
+        var warnings = Publisher.Preflight(OutputFolder, CurrentRules());
         if (warnings.Count > 0)
         {
             var blocking = warnings.Where(w => w.Blocking).ToList();
@@ -345,6 +404,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
                 Owner         = Owner.Trim(),
                 Repository    = Repository,
                 Branch        = string.IsNullOrWhiteSpace(Branch) ? "main" : Branch.Trim(),
+                Rules         = CurrentRules(),
                 CommitMessage = $"Publish {CourseTitle} — {DateTime.Now:d MMMM yyyy HH:mm}",
                 Description   = $"Course website for {CourseTitle}, converted from an LMS export.",
                 Private       = IsPrivate

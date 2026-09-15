@@ -198,3 +198,29 @@ the page), or keep it if the published demo is worth showing. Then tick task 4.3
 - [ ] Choose a file that is not a cartridge: "This file is not an LMS cartridge…".
 - [ ] Start the app with a cartridge as its only argument: it opens straight into step 1.
 - [ ] `--convert <cartridge> <folder>` writes the site and a `convert-log.txt`, with no window.
+
+---
+
+## 7. Leaving files out of the publish
+
+Added 2026-09-15. The demo course carries `Lecture 1.pptx`, which is enough to see all of it.
+
+1. Open `samples\demo-course.imscc`, tick **Leave some files out of the publish**, type `pptx` in
+   **Types**, and build.
+   - [ ] The line under the boxes reads "Kept out of the publish: no .pptx…".
+   - [ ] The build line reports the size "to publish", and it is smaller than before.
+   - [ ] **Notes from the conversion** says 1 file will not be published.
+2. Open the site from disk and go to **Lecture notes**.
+   - [ ] The file is still listed by name and size, with "Not published — .pptx files are not
+         published from this site" instead of a download link.
+   - [ ] The file itself is still in `files\` in the folder — only the publish is trimmed.
+3. Look at `.gitignore` in the site folder.
+   - [ ] It carries `*.pptx`, names LMS 2 Website, and says what the rules are.
+4. Untick the box and build again.
+   - [ ] The download link is back and `.gitignore` is gone.
+5. Now use a size instead: tick the box, clear **Types**, put `1` in **Bigger than**, build.
+   - [ ] `.gitignore` lists the individual files rather than a pattern — git cannot match on size.
+   - [ ] Every affected page says "over the 1 MB limit set for this site".
+6. Publish a site that has exclusions (either route).
+   - [ ] The pushed repository does not contain the excluded files.
+   - [ ] No page on the published site has a download link that 404s.

@@ -216,6 +216,8 @@ a.lms-link::after {
 .files li { margin: .25rem 0; }
 .files a { font-weight: 550; }
 .files .size { color: var(--text-soft); font-size: .85rem; }
+/* A file that was built but kept out of the publish: named, never linked. */
+.files .unpublished { color: var(--warn); font-size: .85rem; }
 
 .embed { width: 100%; height: 42rem; max-height: 80vh; border: 1px solid var(--line); border-radius: var(--radius); }
 

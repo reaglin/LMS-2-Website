@@ -22,6 +22,18 @@ public sealed class ProjectSettings
     public string Branch     { get; set; } = "main";
     public bool   Private    { get; set; }
 
+    /// <summary>Files bigger than this many MB are built but not published. 0 = publish them all.</summary>
+    public int ExcludeOverMb { get; set; }
+    /// <summary>Types kept out of the publish, as the user typed them (".pptx, .zip").</summary>
+    public string ExcludeTypes { get; set; } = string.Empty;
+
+    /// <summary>The two settings above as the rules the builder and the publisher both use.</summary>
+    public PublishRules Rules() => new()
+    {
+        MaxBytes   = ExcludeOverMb > 0 ? ExcludeOverMb * 1024L * 1024L : 0,
+        Extensions = PublishRules.ParseExtensions(ExcludeTypes)
+    };
+
     public DateTime? LastBuiltUtc     { get; set; }
     public DateTime? LastPublishedUtc { get; set; }
     public string PagesUrl { get; set; } = string.Empty;
