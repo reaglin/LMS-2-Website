@@ -1,0 +1,101 @@
+<Window x:Class="Lms2Website.App.Views.CartridgeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Course exports, in plain words" Height="700" Width="640"
+        MinHeight="420" MinWidth="480"
+        Background="{StaticResource Page}"
+        WindowStartupLocation="CenterOwner">
+
+  <Window.Resources>
+    <Style x:Key="H" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Margin" Value="0,18,0,4" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style x:Key="P" TargetType="TextBlock">
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Margin" Value="0,0,0,6" />
+      <Setter Property="Foreground" Value="{StaticResource TextSoft}" />
+      <Setter Property="FontSize" Value="12.5" />
+    </Style>
+    <Style x:Key="Lms" TargetType="TextBlock" BasedOn="{StaticResource P}">
+      <Setter Property="Margin" Value="0,0,0,2" />
+    </Style>
+  </Window.Resources>
+
+  <DockPanel Margin="16">
+
+    <Border DockPanel.Dock="Bottom" Margin="0,12,0,0">
+      <Button Content="Close" HorizontalAlignment="Right" MinWidth="90" Click="OnClose" IsCancel="True" />
+    </Border>
+
+    <Border Style="{StaticResource CardBorder}">
+      <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+
+          <TextBlock Text="Getting your course out of the LMS" FontSize="16" FontWeight="SemiBold" />
+          <TextBlock Style="{StaticResource P}" Margin="0,6,0,0"
+                     Text="This app starts from one file that your LMS can produce. Here is what that file is and how to get it." />
+
+          <TextBlock Style="{StaticResource H}" Text="What an .imscc file is" />
+          <TextBlock Style="{StaticResource P}">
+            <Run Text="It is your whole course in a single file: the pages, the files you uploaded, the quizzes, the assignments, the discussions and the links, with a list saying what order they go in." />
+            <LineBreak /><LineBreak />
+            <Run Text="The format is called " /><Run Text="IMS Common Cartridge" FontWeight="SemiBold" Foreground="#24292F" />
+            <Run Text=" — an open standard, now looked after by 1EdTech, that exists so a course is not trapped inside one system. Brightspace, Canvas, Moodle and Blackboard can all read it, and most can write it, which is why the same file works in more than one place." />
+            <LineBreak /><LineBreak />
+            <Run Text="Underneath it is an ordinary zip file with a catalogue inside it, so nothing about it is secret or fragile. Renaming it to .zip and opening it shows you exactly what your LMS handed over. This app never changes it — it only reads." />
+          </TextBlock>
+
+          <TextBlock Style="{StaticResource H}" Text="How to export one" />
+          <TextBlock Style="{StaticResource P}"
+                     Text="The wording moves around between versions, so treat these as the path rather than the exact words. In every case you end up downloading one file; keep it somewhere you can find again, because this app remembers which file each course came from." />
+
+          <TextBlock Style="{StaticResource Lms}" Margin="0,8,0,2">
+            <Run Text="Brightspace (D2L)" FontWeight="SemiBold" Foreground="#24292F" />
+          </TextBlock>
+          <TextBlock Style="{StaticResource P}"
+                     Text="Course Admin → Import / Export / Copy Components → Export as Common Cartridge → choose the components (or take all of them) → Export → then download the package when it is ready. The file arrives named something like D2LCCExport_…imscc." />
+
+          <TextBlock Style="{StaticResource Lms}" Margin="0,8,0,2">
+            <Run Text="Canvas" FontWeight="SemiBold" Foreground="#24292F" />
+          </TextBlock>
+          <TextBlock Style="{StaticResource P}"
+                     Text="Settings → Export Course Content → choose &quot;Course&quot; → Create Export → wait, then download. Canvas produces an .imscc directly." />
+
+          <TextBlock Style="{StaticResource Lms}" Margin="0,8,0,2">
+            <Run Text="Moodle" FontWeight="SemiBold" Foreground="#24292F" />
+          </TextBlock>
+          <TextBlock Style="{StaticResource P}"
+                     Text="Careful here: Moodle's ordinary Backup produces an .mbz, which is Moodle's own format and not a cartridge — this app cannot read it. Common Cartridge export is a separate option and is not switched on everywhere. If your Moodle does not offer it, ask whoever administers the site." />
+
+          <TextBlock Style="{StaticResource Lms}" Margin="0,8,0,2">
+            <Run Text="Blackboard" FontWeight="SemiBold" Foreground="#24292F" />
+          </TextBlock>
+          <TextBlock Style="{StaticResource P}"
+                     Text="Packages and Utilities → Export/Archive Course. Blackboard's own Export Package is a Blackboard format rather than a cartridge; where a Common Cartridge option is offered, choose that one." />
+
+          <TextBlock Style="{StaticResource H}" Text="How big it will be, and how long it takes" />
+          <TextBlock Style="{StaticResource P}"
+                     Text="Mostly it depends on your slides. A course of text and links is a few megabytes; one with a lecture deck per week runs to a hundred and more. A real 135 MB export of a statistics course reads in about a fifth of a second here and becomes 149 pages in under two seconds, so the export itself is usually the slow part, not this app." />
+          <TextBlock Style="{StaticResource P}"
+                     Text="If the size is a problem for publishing, step 2 can leave the big files out — see &quot;New to GitHub?&quot; for what reaches the web." />
+
+          <TextBlock Style="{StaticResource H}" Text="What survives, and what does not" />
+          <TextBlock Style="{StaticResource P}"
+                     Text="Pages, files, quizzes with their answers, assignments, discussions and links all come through. What cannot come through is anything that was never really in the course: student work, grades, anything the LMS keeps behind a sign-in, and tools that only run inside the LMS. Where a link points back into the LMS, the website says so rather than pretending it will work." />
+          <TextBlock Style="{StaticResource P}"
+                     Text="Step 1 lists everything it found before anything is built, and the notes after a build name every reference that could not be resolved. Nothing is quietly dropped." />
+
+          <TextBlock Style="{StaticResource H}" Text="If it will not open" />
+          <TextBlock Style="{StaticResource P}"
+                     Text="Two things account for most of it: the download did not finish (the file is much smaller than expected), or it is not a cartridge at all — an .mbz from Moodle, or a Blackboard package. Export again and check the file is the size you expect." />
+          <TextBlock Style="{StaticResource P}"
+                     Text="Only Brightspace exports have been tested end to end here. Canvas, Moodle and Blackboard cartridges are read by the same code and should work; if one does not, that is worth reporting." />
+
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+  </DockPanel>
+</Window>

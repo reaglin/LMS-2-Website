@@ -128,11 +128,11 @@ public class CourseStatusTests : IDisposable
     }
 
     /// <summary>
-    /// "Pushed" is a record of what this machine did, not a claim about what GitHub is serving.
-    /// Nothing here should read as though the site had been checked.
+    /// "Pushed" says the site was sent, and nothing more. Whether GitHub is serving it is a
+    /// separate question the user checks in GitHub Pages, so no wording here may imply it.
     /// </summary>
     [Fact]
-    public void ItNeverClaimsToKnowThatTheSiteIsLive()
+    public void ItSaysPushedAndNeverImpliesTheSiteIsReachable()
     {
         var status = CourseStatus.For(new ProjectSettings
         {
@@ -141,7 +141,8 @@ public class CourseStatusTests : IDisposable
             PagesUrl = "https://reaglin.github.io/L2W-egn3443/"
         });
 
-        foreach (var claim in new[] { "live", "online", "reachable", "serving" })
+        Assert.StartsWith("pushed", status.PushedText, StringComparison.Ordinal);
+        foreach (var claim in new[] { "live", "online", "reachable", "serving", "published", "available" })
             Assert.DoesNotContain(claim, status.PushedText, StringComparison.OrdinalIgnoreCase);
     }
 }

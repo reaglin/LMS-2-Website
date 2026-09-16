@@ -24,9 +24,10 @@ public enum StepState
 ///   <item><b>Pushed</b> — is the folder a repository with a publish recorded against it?</item>
 /// </list>
 ///
-/// "Live on GitHub" cannot be answered from disk, so it is not claimed here: what is recorded is
-/// that a publish happened and the address it produced. Opening the address is the honest check,
-/// and the window offers it rather than quietly making requests on the user's behalf.
+/// The fourth says only that the site was <b>pushed</b>. Whether it is reachable is a separate
+/// question — GitHub Pages builds after a push, and the setting can be off — and it cannot be
+/// answered from disk, so it is never implied. The window says outright that GitHub Pages has to
+/// be checked for that, rather than quietly making requests on the user's behalf.
 /// </summary>
 public sealed class CourseStatus
 {
@@ -95,9 +96,9 @@ public sealed class CourseStatus
 
     public string PushedText => Pushed switch
     {
-        StepState.No => HasRepository ? "committed, never pushed from here" : "never published",
-        StepState.Stale => $"published {Local(PublishedUtc)} — rebuilt since",
-        _ => $"published {Local(PublishedUtc)}"
+        StepState.No => HasRepository ? "committed, never pushed from here" : "not pushed",
+        StepState.Stale => $"pushed {Local(PublishedUtc)} — rebuilt since",
+        _ => $"pushed {Local(PublishedUtc)}"
     };
 
     /// <summary>The one thing that would answer "is it live?", for the user to click.</summary>

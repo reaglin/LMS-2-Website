@@ -239,24 +239,30 @@ Added 2026-09-15. The demo course carries `Lecture 1.pptx`, which is enough to s
 
 Added 2026-09-15. Read these as though you had never used GitHub.
 
-1. Start the app with nothing loaded and press **New to GitHub?** in the header.
+1. Press **What is a course export?** in the header, to the left of **New to GitHub?**.
+   - [ ] It opens with nothing loaded, and explains what Common Cartridge is before how to get one.
+   - [ ] The Brightspace path matches what you actually do at Daytona State.
+   - [ ] It warns that a Moodle `.mbz` and a Blackboard package are not cartridges.
+   - [ ] It says which LMS exports have actually been tested, rather than sounding equally sure
+         about all four.
+2. Start the app with nothing loaded and press **New to GitHub?** in the header.
    - [ ] It opens before any course is chosen — that is the point; step 3 is still greyed out.
    - [ ] Nothing in it assumes you know what a repository, a branch or Pages is.
    - [ ] The github.com/signup link opens in a browser.
-2. Read "The repository and the website are two different things".
+3. Read "The repository and the website are two different things".
    - [ ] It is clear afterwards that the repository is the files and Pages is the website, that the
          two have separate visibility, and that a private repository can still serve a public site.
    - [ ] "Keeping something off the web" names all three ways — size, type, quizzes — and says that
          quizzes are not written at all.
-3. In step 3, before touching anything.
+4. In step 3, before touching anything.
    - [ ] The paragraph under the heading says what publishing does, that you need a free account
          and permission, and that the repository must be public.
-4. Tick **Private repository**.
+5. Tick **Private repository**.
    - [ ] A warning appears saying it does **not** make the website private, that a Pages site is
          public even when its repository is not, that a free account cannot publish from a private
          repository at all, and that restricting viewers needs GitHub Enterprise Cloud.
    - [ ] Untick it: the warning goes.
-5. Publish without a token (hand-test 4) and read the next-steps box.
+6. Publish without a token (hand-test 4) and read the next-steps box.
    - [ ] It is a numbered list: open settings/pages, Source → Deploy from a branch, main / (root),
          Save, wait a minute, open the address.
    - [ ] Someone who has never done it could follow it without asking anybody.
@@ -281,8 +287,9 @@ Added 2026-09-15 (tasks 6.1, 6.3, 6.7).
 3. Touch the export (so it is newer than the build) and restart.
    - [ ] Converted turns amber and says the export is newer.
 4. Build again without publishing.
-   - [ ] Pushed says "rebuilt since" in amber, if it had been published before.
-   - [ ] Nothing in the row claims the site is live — that needs the Website button.
+   - [ ] Pushed says "rebuilt since" in amber, if it had been pushed before.
+   - [ ] The row says only that the site was **pushed** — never that it is live or reachable —
+         and the note underneath says to check GitHub Pages to find that out.
 
 ### Where it all goes
 

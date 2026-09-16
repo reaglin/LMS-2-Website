@@ -38,6 +38,9 @@ public partial class MainWindow : Window
         if (sender is FrameworkElement { Tag: CourseStatus status }) act(status);
     }
 
+    private void OnCartridgeHelp(object sender, RoutedEventArgs e) =>
+        new CartridgeWindow { Owner = this }.ShowDialog();
+
     private void OnHelp(object sender, RoutedEventArgs e) =>
         new HelpWindow { Owner = this }.ShowDialog();
 

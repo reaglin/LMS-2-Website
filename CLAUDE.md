@@ -50,7 +50,8 @@ LMS2Website.sln
 ├── src/Lms2Website.App/      net10.0-windows, WPF. Assembly name LMS2Website.
 │   MainWindow   three steps down one page, a busy strip at the bottom
 │   ViewModels/  MainViewModel (all the state), PreviewNode, RelayCommand, Converters
-│   Views/       TokenWindow, HelpWindow (publishing explained for a GitHub novice)
+│   Views/       TokenWindow, HelpWindow (publishing explained for a GitHub novice),
+│                CartridgeWindow (what an .imscc is and how to export one)
 ├── tests/Lms2Website.Tests/  xUnit: the reader, QTI, slugs, the site builder, publishing
 ├── samples/     demo-course.imscc (written by `--write-sample`)
 ├── docs/        the four files above

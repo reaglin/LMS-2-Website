@@ -36,7 +36,8 @@
           <!-- Both always reachable: step 3 is disabled until a site is built, and the help is
                most wanted before that, not after. -->
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <Button Content="New to GitHub?" Click="OnHelp" />
+            <Button Content="What is a course export?" Click="OnCartridgeHelp" />
+            <Button Content="New to GitHub?" Margin="8,0,0,0" Click="OnHelp" />
             <Button Content="GitHub token…" Margin="8,0,0,0" Click="OnSettings" />
           </StackPanel>
         </Grid>
@@ -121,7 +122,7 @@
                 </ItemsControl>
               </Expander>
               <TextBlock Style="{StaticResource Hint}" Margin="0,8,0,0" TextWrapping="Wrap"
-                         Text="Read from this computer only. &quot;Pushed&quot; means a publish was recorded here — open the website to see whether GitHub is serving it." />
+                         Text="Read from this computer only. &quot;Pushed&quot; means the site was sent to GitHub — it does not mean the site is reachable. To know that, check GitHub Pages for the repository (Settings → Pages), or open the website." />
             </StackPanel>
           </Border>
 
