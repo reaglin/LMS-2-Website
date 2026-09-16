@@ -34,9 +34,9 @@
       <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel>
 
-          <TextBlock Text="Getting your course out of the LMS" FontSize="16" FontWeight="SemiBold" />
+          <TextBlock Text="Where the course file comes from" FontSize="16" FontWeight="SemiBold" />
           <TextBlock Style="{StaticResource P}" Margin="0,6,0,0"
-                     Text="This app starts from one file that your LMS can produce. Here is what that file is and how to get it." />
+                     Text="This app starts from one file — an export of a whole course, which your LMS can produce and so can PreseMaker. Here is what that file is and how to get one." />
 
           <TextBlock Style="{StaticResource H}" Text="What an .imscc file is" />
           <TextBlock Style="{StaticResource P}">
@@ -45,12 +45,12 @@
             <Run Text="The format is called " /><Run Text="IMS Common Cartridge" FontWeight="SemiBold" Foreground="#24292F" />
             <Run Text=" — an open standard, now looked after by 1EdTech, that exists so a course is not trapped inside one system. Brightspace, Canvas, Moodle and Blackboard can all read it, and most can write it, which is why the same file works in more than one place." />
             <LineBreak /><LineBreak />
-            <Run Text="Underneath it is an ordinary zip file with a catalogue inside it, so nothing about it is secret or fragile. Renaming it to .zip and opening it shows you exactly what your LMS handed over. This app never changes it — it only reads." />
+            <Run Text="Underneath it is an ordinary zip file with a catalogue inside it, so nothing about it is secret or fragile. Renaming it to .zip and opening it shows you exactly what was handed over. This app never changes it — it only reads." />
           </TextBlock>
 
           <TextBlock Style="{StaticResource H}" Text="How to export one" />
           <TextBlock Style="{StaticResource P}"
-                     Text="The wording moves around between versions, so treat these as the path rather than the exact words. In every case you end up downloading one file; keep it somewhere you can find again, because this app remembers which file each course came from." />
+                     Text="Four learning systems can produce one, and so can PreseMaker, which writes courses rather than hosting them. The wording moves around between versions, so treat these as the path rather than the exact words. Either way you end up with one file; keep it somewhere you can find again, because this app remembers which file each course came from." />
 
           <TextBlock Style="{StaticResource Lms}" Margin="0,8,0,2">
             <Run Text="Brightspace (D2L)" FontWeight="SemiBold" Foreground="#24292F" />
@@ -76,6 +76,13 @@
           <TextBlock Style="{StaticResource P}"
                      Text="Packages and Utilities → Export/Archive Course. Blackboard's own Export Package is a Blackboard format rather than a cartridge; where a Common Cartridge option is offered, choose that one." />
 
+          <TextBlock Style="{StaticResource Lms}" Margin="0,8,0,2">
+            <Run Text="PreseMaker" FontWeight="SemiBold" Foreground="#24292F" />
+            <Run Text=" — not an LMS, but it writes them" Foreground="{StaticResource TextSoft}" />
+          </TextBlock>
+          <TextBlock Style="{StaticResource P}"
+                     Text="If you author the course in PreseMaker rather than in an LMS, it can write the cartridge itself: Export Cartridge → tick what to include → choose where to save it → Export. It produces IMS Common Cartridge 1.3, named something like MyCourse_cc13_20260916_101500.imscc, which is exactly what this app expects — so the course never has to go near an LMS at all." />
+
           <TextBlock Style="{StaticResource H}" Text="How big it will be, and how long it takes" />
           <TextBlock Style="{StaticResource P}"
                      Text="Mostly it depends on your slides. A course of text and links is a few megabytes; one with a lecture deck per week runs to a hundred and more. A real 135 MB export of a statistics course reads in about a fifth of a second here and becomes 149 pages in under two seconds, so the export itself is usually the slow part, not this app." />
@@ -92,7 +99,7 @@
           <TextBlock Style="{StaticResource P}"
                      Text="Two things account for most of it: the download did not finish (the file is much smaller than expected), or it is not a cartridge at all — an .mbz from Moodle, or a Blackboard package. Export again and check the file is the size you expect." />
           <TextBlock Style="{StaticResource P}"
-                     Text="Only Brightspace exports have been tested end to end here. Canvas, Moodle and Blackboard cartridges are read by the same code and should work; if one does not, that is worth reporting." />
+                     Text="Only Brightspace exports have been tested end to end so far. Cartridges from Canvas, Moodle, Blackboard and PreseMaker are recognised and read by the same code and should work; if one does not, that is worth reporting." />
 
         </StackPanel>
       </ScrollViewer>

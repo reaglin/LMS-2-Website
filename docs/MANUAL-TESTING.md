@@ -243,6 +243,8 @@ Added 2026-09-15. Read these as though you had never used GitHub.
    - [ ] It opens with nothing loaded, and explains what Common Cartridge is before how to get one.
    - [ ] The Brightspace path matches what you actually do at Daytona State.
    - [ ] It warns that a Moodle `.mbz` and a Blackboard package are not cartridges.
+   - [ ] PreseMaker is listed as a fifth way to get one, described as an authoring tool rather
+         than an LMS, writing CC 1.3 as `<course>_cc13_<stamp>.imscc`.
    - [ ] It says which LMS exports have actually been tested, rather than sounding equally sure
          about all four.
 2. Start the app with nothing loaded and press **New to GitHub?** in the header.

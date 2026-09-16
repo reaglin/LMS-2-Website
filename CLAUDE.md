@@ -139,7 +139,10 @@ dotnet publish src/Lms2Website.App/Lms2Website.App.csproj -c Release -r win-x64 
 
 ## Sibling repos worth knowing
 
-- `..\PreseMaker` — where `CcPackage`, `CcManifestReader` and `CcResourceReaders` were copied from
+- `..\PreseMaker` — **also writes cartridges** (`Services/CommonCartridge/CommonCartridgeExportService.cs`,
+  CC 1.3, `<course>_cc13_<stamp>.imscc`), so it is a source of input for this app and not only the
+  place the reader came from; the export help window lists it. And where `CcPackage`,
+  `CcManifestReader` and `CcResourceReaders` were copied from
   (`Services/CommonCartridge/`), and where the GitHub push began
   (`Services/WebsiteGitHubPublishService.cs`). **The copies are not linked.** This repo has since
   fixed a D2L href case PreseMaker still misses — see `docs/CARTRIDGE-NOTES.md`.
