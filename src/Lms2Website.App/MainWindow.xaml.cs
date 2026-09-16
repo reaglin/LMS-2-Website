@@ -4,6 +4,7 @@ using System.Windows.Documents;
 using System.Windows.Navigation;
 using Lms2Website.App.ViewModels;
 using Lms2Website.App.Views;
+using Lms2Website.Core.Publish;
 
 namespace Lms2Website.App;
 
@@ -24,6 +25,17 @@ public partial class MainWindow : Window
     {
         new TokenWindow { Owner = this }.ShowDialog();
         _model.RefreshTokenStatus();
+    }
+
+    // The three buttons on a row of the courses list. The row's course travels on Tag, which is
+    // simpler than a command per row and keeps the view model free of WPF.
+    private void OnOpenCourse(object sender, RoutedEventArgs e) => WithCourse(sender, _model.OpenCourse);
+    private void OnOpenCourseFolder(object sender, RoutedEventArgs e) => WithCourse(sender, _model.OpenCourseFolder);
+    private void OnOpenCourseSite(object sender, RoutedEventArgs e) => WithCourse(sender, _model.OpenCourseSite);
+
+    private static void WithCourse(object sender, Action<CourseStatus> act)
+    {
+        if (sender is FrameworkElement { Tag: CourseStatus status }) act(status);
     }
 
     private void OnHelp(object sender, RoutedEventArgs e) =>

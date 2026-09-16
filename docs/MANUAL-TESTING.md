@@ -85,7 +85,7 @@ first — start at **Make the token**.
 
 ### Already prepared and passing
 
-- `manual-test\LMS2Website.exe` rebuilt from the current tree; solution builds clean, 103 tests green.
+- `manual-test\LMS2Website.exe` rebuilt from the current tree; solution builds clean, 114 tests green.
 - The demo cartridge runs through that exact binary: 8 pages, 2 files, 0.2 s, `.nojekyll` and
   `l2w-site.json` written.
 - **Git 2.53.0** is on PATH, so the token route will push **with Git** — see *What this will not cover*.
@@ -260,3 +260,44 @@ Added 2026-09-15. Read these as though you had never used GitHub.
    - [ ] It is a numbered list: open settings/pages, Source → Deploy from a branch, main / (root),
          Save, wait a minute, open the address.
    - [ ] Someone who has never done it could follow it without asking anybody.
+
+---
+
+## 9. Your courses, and the ticks in the tree
+
+Added 2026-09-15 (tasks 6.1, 6.3, 6.7).
+
+### The courses list
+
+1. Start the app with at least one course already converted.
+   - [ ] "Your courses" is at the top, before step 1, and lists each course once.
+   - [ ] Each row shows the export, whether it converted, the website's pages and size, and
+         whether a publish was recorded — green for done, amber for "done but something changed
+         since", grey for not yet.
+   - [ ] **Open** loads that course again; **Folder** opens the site folder; **Website** is greyed
+         until there is an address.
+2. Rename the export on disk and restart.
+   - [ ] The row says "not where it was" in amber, and **Open** offers the file chooser.
+3. Touch the export (so it is newer than the build) and restart.
+   - [ ] Converted turns amber and says the export is newer.
+4. Build again without publishing.
+   - [ ] Pushed says "rebuilt since" in amber, if it had been published before.
+   - [ ] Nothing in the row claims the site is live — that needs the Website button.
+
+### Where it all goes
+
+- [ ] A new course defaults to `Documents\L2W\sites\L2W-<course>`.
+- [ ] The folder name and the repository name are the same string.
+- [ ] A course remembered by an older build still opens, still pointing at its old folder.
+
+### Ticks in the tree
+
+5. Open a course and untick one item.
+   - [ ] Its section's tick goes to the "some" state.
+   - [ ] Build: that page is not written, nothing links to it, and search does not find it.
+6. Untick a whole section.
+   - [ ] Everything under it clears.
+   - [ ] Build: the section is not in the menu, not on the home page, and has no folder.
+7. Re-tick the section and build again.
+   - [ ] Everything comes back.
+- [ ] An item the app cannot publish (marked "not published") cannot be ticked on.

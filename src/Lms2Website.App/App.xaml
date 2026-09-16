@@ -7,6 +7,7 @@
 
       <vm:ShowIfTextConverter x:Key="ShowIfText" />
       <vm:BoldIfSectionConverter x:Key="BoldIfSection" />
+      <vm:StateColourConverter x:Key="StateColour" />
 
       <!-- One accent, one text colour, one line colour: the window is a form, not a brochure. -->
       <Color x:Key="AccentColor">#1F5FA9</Color>

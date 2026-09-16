@@ -5,6 +5,18 @@ phase 5 (the Store) and phase 6 (polish) are open.
 
 ---
 
+## How an item is marked
+
+| Mark | Means |
+|---|---|
+| ⬜ | not started |
+| ⚠️ | **built, waiting for Ron to look at it.** Tests pass and it has been driven in the window, but he has not confirmed it |
+| ✅ | Ron has confirmed it |
+
+Everything built on 2026-09-15 is ⚠️ until he says otherwise.
+
+---
+
 ## Phase 0 — the repository ✅ 2026-09-14
 
 | # | Task | Done when |
@@ -103,16 +115,16 @@ Statistle's `resources/STORE-SUBMISSION.md` is the template for the whole phase.
 
 | # | Task | Why |
 |---|---|---|
-| 6.1 | Tick boxes in the preview to leave sections or items out | The model already carries `Include`; only the view model work is missing |
-| 6.2 | A course home page written by the user (a paragraph above the section cards) | Right now the home page shows only the cartridge's own description |
-| 6.3 | Remember several courses and offer them on start-up | `SettingsStore.Recent()` already returns them |
-| 6.4 | ~~Leave files out of the **publish**~~ ✅ **2026-09-15** | Answer to question 2. `PublishRules` (size, type, and quizzes) reaches the builder, so the app writes the `.gitignore` *and* marks every excluded file on its own page — no published page links to a file the site does not carry. Quizzes go further: not written at all, because the answer key is in them, so nothing reaches the folder to be published by accident. The API upload path applies the same rules, and the size checks no longer count files that are never sent |
+| 6.1 | ~~Tick boxes in the preview to leave sections or items out~~ ⚠️ **2026-09-15** | Every line of the tree has a tick: a section, a heading inside it, or one item. A parent is three-state and derived from its children, and ticking a parent ticks everything under it. It writes straight to `Include`, which every list in the site already filters on, so nothing else had to change. Type-level exclusion (all quizzes) stays in step 2 |
+| 6.2 | ~~A course home page written by the user~~ ❌ **not doing** | Ron, 2026-09-15: the cartridge description is sufficient, and any editing belongs in other tools |
+| 6.3 | ~~Remember several courses and offer them on start-up~~ ⚠️ **2026-09-15** | "Your courses" at the top of the window: every course with its export, whether it converted, whether the website is in the folder now, and whether a publish was recorded — green, amber for "done but something changed since", grey for not yet. Read from disk only; **"live on GitHub" is not claimed**, because that cannot be known without asking GitHub, so the row offers a Website button instead |
+| 6.4 | ~~Leave files out of the **publish**~~ ⚠️ **2026-09-15** | Answer to question 2. `PublishRules` (size, type, and quizzes) reaches the builder, so the app writes the `.gitignore` *and* marks every excluded file on its own page — no published page links to a file the site does not carry. Quizzes go further: not written at all, because the answer key is in them, so nothing reaches the folder to be published by accident. The API upload path applies the same rules, and the size checks no longer count files that are never sent |
 | 6.5 | Canvas and Moodle exports hand-checked | Only Brightspace has been run through a real export |
 | 6.6 | An "unpublish" that empties the branch | Deleting a course site currently means doing it on github.com |
-| 6.7 | A setting for where sites are written: Documents (the default), a local drive, or a folder of the user's choosing | Answer to question 1 — Documents stays the default because that is where people look, but a machine whose Documents is a synced work OneDrive should be able to opt out. Not started: Ron wants to explore it first |
-| 6.8 | ~~Move `github-token.dat` to `%LOCALAPPDATA%`~~ ✅ **2026-09-15** | Sites stay in Documents (question 1); the token does not, because nobody browses to a DPAPI blob. A token saved by an older build is moved out of Documents once, on first read, and **Remove** deletes both places |
-| 6.9 | ~~**Publishing, explained for someone who does not know GitHub**~~ ✅ **2026-09-15** | Answer to question 3. A "New to GitHub?" button in the header — reachable before a site is built, which is when it is wanted — opens a help window that assumes nothing: what a repository and Pages are, the address you will get, why the repository must be public, what a token is, and the five clicks to switch Pages on. Step 3 carries a short version inline, and the Git-only next-steps are now numbered |
-| 6.10 | ~~Say plainly what "Private repository" costs~~ ✅ **2026-09-15** | Answer to question 3 — but **not** with the wording first asked for. "Only people with access can see it" is false: GitHub's own documentation says "GitHub Pages sites are publicly available on the internet, even if the repository for the site is private". Ticking the box now raises a warning saying exactly that, shared word for word with the publish log via `PublishWords`, and pinned by tests so it cannot drift back |
+| 6.7 | ~~Where sites are written~~ ⚠️ **2026-09-15** | Ron settled the convention: `Documents\L2W\sites\L2W-{name}`. The app folder is now `L2W`, and a site folder is named exactly like the repository it pushes to. Projects remembered by an older build are carried forward; existing site folders are left where they are, since each project records its own path. **The "local drive or a folder of your choosing" option was not built** — Ron named a fixed location, so that part looks superseded; say if it is still wanted |
+| 6.8 | ~~Move `github-token.dat` to `%LOCALAPPDATA%`~~ ⚠️ **2026-09-15** | Sites stay in Documents (question 1); the token does not, because nobody browses to a DPAPI blob. A token saved by an older build is moved out of Documents once, on first read, and **Remove** deletes both places |
+| 6.9 | ~~**Publishing, explained for someone who does not know GitHub**~~ ⚠️ **2026-09-15** | Answer to question 3. A "New to GitHub?" button in the header — reachable before a site is built, which is when it is wanted — opens a help window that assumes nothing: what a repository and Pages are, the address you will get, why the repository must be public, what a token is, and the five clicks to switch Pages on. Step 3 carries a short version inline, and the Git-only next-steps are now numbered |
+| 6.10 | ~~Say plainly what "Private repository" costs~~ ⚠️ **2026-09-15** | Answer to question 3 — but **not** with the wording first asked for. "Only people with access can see it" is false: GitHub's own documentation says "GitHub Pages sites are publicly available on the internet, even if the repository for the site is private". Ticking the box now raises a warning saying exactly that, shared word for word with the publish log via `PublishWords`, and pinned by tests so it cannot drift back |
 
 ---
 

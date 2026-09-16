@@ -33,7 +33,38 @@ public sealed class MainViewModel : INotifyPropertyChanged
         OpenPagesCommand     = new RelayCommand(() => Open(PagesUrl), () => PagesUrl.Length > 0);
         CancelCommand        = new RelayCommand(() => _cancellation?.Cancel(), () => IsBusy);
         RefreshTokenStatus();
+        RefreshCourses();
     }
+
+    // ── the courses already converted ─────────────────────────────────────────
+
+    private List<CourseStatus> _courses = new();
+    /// <summary>Every course the app knows about, with how far each one has got.</summary>
+    public List<CourseStatus> Courses
+    {
+        get => _courses;
+        private set { Set(ref _courses, value); Raise(nameof(HasCourses)); }
+    }
+
+    public bool HasCourses => _courses.Count > 0;
+
+    /// <summary>Re-reads the list from disk. Cheap, and never touches the network.</summary>
+    public void RefreshCourses() => Courses = CourseStatus.All().ToList();
+
+    /// <summary>Opens a course from the list by reading its export again.</summary>
+    public void OpenCourse(CourseStatus status)
+    {
+        if (status.SourceExists) { _ = ReadAsync(status.SourcePath); return; }
+
+        MessageBox.Show(
+            $"The export for {status.Title} is not where it was:\n\n{status.SourcePath}\n\n" +
+            "Choose the file again to carry on with this course.",
+            "That export has moved", MessageBoxButton.OK, MessageBoxImage.Information);
+        ChooseSource();
+    }
+
+    public void OpenCourseFolder(CourseStatus status) => Open(status.OutputFolder);
+    public void OpenCourseSite(CourseStatus status) => Open(status.PagesUrl);
 
     // ── step 1: the export ────────────────────────────────────────────────────
 
@@ -204,6 +235,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
             _project.LastBuiltUtc  = DateTime.UtcNow;
             _project.CourseTitle   = course.Title;
             SettingsStore.Save(_project);
+            RefreshCourses();
         }
         catch (OperationCanceledException)
         {
@@ -459,6 +491,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
             _project.PagesUrl         = result.PagesUrl;
             _project.LastPublishedUtc = DateTime.UtcNow;
             SettingsStore.Save(_project);
+            RefreshCourses();
         }
         catch (OperationCanceledException)
         {

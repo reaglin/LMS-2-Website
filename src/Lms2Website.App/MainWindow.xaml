@@ -12,6 +12,8 @@
 
     <HierarchicalDataTemplate DataType="{x:Type vm:PreviewNode}" ItemsSource="{Binding Children}">
       <StackPanel Orientation="Horizontal" Margin="0,1">
+        <CheckBox IsChecked="{Binding IsIncluded, Mode=TwoWay}" IsEnabled="{Binding CanInclude}"
+                  IsThreeState="False" VerticalAlignment="Center" Margin="0,0,6,0" />
         <TextBlock Text="{Binding Title}" FontWeight="{Binding IsSection, Converter={StaticResource BoldIfSection}}" />
         <TextBlock Text="{Binding Detail}" Margin="10,0,0,0" Foreground="{StaticResource TextSoft}" FontSize="11"
                    VerticalAlignment="Center" />
@@ -59,6 +61,69 @@
 
       <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="20,16">
         <StackPanel MaxWidth="860">
+
+          <!-- ── your courses ─────────────────────────────────────────── -->
+          <Border Style="{StaticResource CardBorder}"
+                  Visibility="{Binding HasCourses, Converter={StaticResource Show}}">
+            <StackPanel>
+              <Expander IsExpanded="True">
+                <Expander.Header>
+                  <TextBlock Text="Your courses" FontWeight="SemiBold" FontSize="14" />
+                </Expander.Header>
+                <ItemsControl ItemsSource="{Binding Courses}" Margin="0,8,0,0">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <Border BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="0,8">
+                        <Grid>
+                          <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                          </Grid.ColumnDefinitions>
+
+                          <StackPanel>
+                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                            <!-- Each label travels with its value, so a wrap never orphans one. -->
+                            <WrapPanel Margin="0,4,0,0">
+                              <StackPanel Orientation="Horizontal" Margin="0,0,16,2">
+                                <TextBlock Text="Export:" Style="{StaticResource Hint}" />
+                                <TextBlock Text="{Binding SourceText}" Style="{StaticResource Hint}" Margin="4,0,0,0"
+                                           Foreground="{Binding Source, Converter={StaticResource StateColour}}" />
+                              </StackPanel>
+                              <StackPanel Orientation="Horizontal" Margin="0,0,16,2">
+                                <TextBlock Text="Converted:" Style="{StaticResource Hint}" />
+                                <TextBlock Text="{Binding ConvertedText}" Style="{StaticResource Hint}" Margin="4,0,0,0"
+                                           Foreground="{Binding Converted, Converter={StaticResource StateColour}}" />
+                              </StackPanel>
+                              <StackPanel Orientation="Horizontal" Margin="0,0,16,2">
+                                <TextBlock Text="Website:" Style="{StaticResource Hint}" />
+                                <TextBlock Text="{Binding SiteText}" Style="{StaticResource Hint}" Margin="4,0,0,0"
+                                           Foreground="{Binding Site, Converter={StaticResource StateColour}}" />
+                              </StackPanel>
+                              <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                <TextBlock Text="Pushed:" Style="{StaticResource Hint}" />
+                                <TextBlock Text="{Binding PushedText}" Style="{StaticResource Hint}" Margin="4,0,0,0"
+                                           Foreground="{Binding Pushed, Converter={StaticResource StateColour}}" />
+                              </StackPanel>
+                            </WrapPanel>
+                          </StackPanel>
+
+                          <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Content="Open" Padding="10,3" Click="OnOpenCourse" Tag="{Binding}" />
+                            <Button Content="Folder" Padding="10,3" Margin="6,0,0,0" Click="OnOpenCourseFolder"
+                                    Tag="{Binding}" IsEnabled="{Binding SiteExists}" />
+                            <Button Content="Website" Padding="10,3" Margin="6,0,0,0" Click="OnOpenCourseSite"
+                                    Tag="{Binding}" IsEnabled="{Binding CanOpenSite}" />
+                          </StackPanel>
+                        </Grid>
+                      </Border>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </Expander>
+              <TextBlock Style="{StaticResource Hint}" Margin="0,8,0,0" TextWrapping="Wrap"
+                         Text="Read from this computer only. &quot;Pushed&quot; means a publish was recorded here — open the website to see whether GitHub is serving it." />
+            </StackPanel>
+          </Border>
 
           <!-- ── 1. the export ─────────────────────────────────────────── -->
           <Border Style="{StaticResource CardBorder}">

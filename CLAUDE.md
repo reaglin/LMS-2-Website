@@ -15,7 +15,7 @@ line through it: no AI, no course model, no project file.
 **Status: phases 0–4 built, 2026-09-14** (the day it was started). The conversion is verified
 against a real 135 MB Brightspace export of EGN3443 — 19 sections, 88 pages, 15 quizzes, 13
 discussions, 13 assignments — which becomes 149 pages and 25 files in about a second and a half.
-103 tests green. The window has been driven end-to-end (open a cartridge, build the site) through UI
+114 tests green. The window has been driven end-to-end (open a cartridge, build the site) through UI
 Automation. **The GitHub token route has never run against GitHub** — the Git route is tested
 against a local bare repository; the API half needs Ron's token and one real publish
 (`docs/MANUAL-TESTING.md`, test 5). Phase 5 is the Store.
@@ -43,6 +43,7 @@ LMS2Website.sln
 │                ContentRewriter (LMS HTML → site HTML), SiteAssets (the CSS and JS as strings),
 │                Slug, Html
 │   Publish/     Publisher (picks the route), GitHubApi (REST), GitCli (the command line),
+│                CourseStatus (how far each course has got, read from disk only),
 │                TokenStore (DPAPI), RepoName (the L2W- rule), ProjectSettings + SettingsStore
 │   L2W.cs       the marks that say a repository and a folder were made by this app
 │   Samples/     SampleCartridge — the demo .imscc, and what the tests run against
