@@ -1,0 +1,42 @@
+<Window x:Class="Lms2Website.App.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="About LMS 2 Website" Width="560" SizeToContent="Height"
+        ResizeMode="NoResize"
+        Background="{StaticResource Page}"
+        WindowStartupLocation="CenterOwner">
+
+  <!-- Ron, 2026-09-25: "Created by Dr. Ron Eaglin" with his picture, in every program's About. -->
+  <DockPanel Margin="16">
+
+    <Border DockPanel.Dock="Bottom" Margin="0,4,0,0">
+      <Button Content="Close" HorizontalAlignment="Right" MinWidth="90" Click="OnClose" IsCancel="True" IsDefault="True" />
+    </Border>
+
+    <StackPanel>
+      <Border Style="{StaticResource CardBorder}">
+        <DockPanel>
+          <Border DockPanel.Dock="Left" Width="96" Height="96" CornerRadius="8" Margin="0,0,16,0"
+                  AutomationProperties.Name="Photograph of Dr. Ron Eaglin">
+            <Border.Background>
+              <ImageBrush ImageSource="pack://application:,,,/Images/dr-ron-eaglin.jpg" Stretch="UniformToFill" />
+            </Border.Background>
+          </Border>
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="Created by Dr. Ron Eaglin" FontSize="16" FontWeight="SemiBold"
+                       AutomationProperties.Name="Created by Dr. Ron Eaglin" />
+            <TextBlock x:Name="VersionText" Style="{StaticResource Hint}" />
+          </StackPanel>
+        </DockPanel>
+      </Border>
+
+      <Border Style="{StaticResource CardBorder}">
+        <StackPanel>
+          <TextBlock Text="LMS 2 Website" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,6" />
+          <TextBlock Foreground="{StaticResource TextSoft}" FontSize="12.5"
+                     Text="LMS 2 Website turns a course exported from your learning management system — Brightspace, Canvas, Moodle or Blackboard — into an ordinary website, and puts it on GitHub Pages so anyone with the address can read it. It takes three steps in one window: choose the export, build the website, publish. The website is a folder of plain web pages on this computer that needs no server and no account to open, and nothing is sent anywhere until you press Publish." />
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </DockPanel>
+</Window>

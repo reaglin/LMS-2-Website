@@ -44,6 +44,9 @@ public partial class MainWindow : Window
     private void OnHelp(object sender, RoutedEventArgs e) =>
         new HelpWindow { Owner = this }.ShowDialog();
 
+    private void OnAbout(object sender, RoutedEventArgs e) =>
+        new AboutWindow { Owner = this }.ShowDialog();
+
     private void OnNavigate(object sender, RequestNavigateEventArgs e)
     {
         if (sender is Hyperlink link && link.NavigateUri != null)

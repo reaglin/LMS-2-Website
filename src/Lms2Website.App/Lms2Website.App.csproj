@@ -11,6 +11,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- About: Created by Dr. Ron Eaglin (Ron, 2026-09-25), a 256 px copy of his picture. -->
+    <Resource Include="Images\dr-ron-eaglin.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Lms2Website.Core\Lms2Website.Core.csproj" />
   </ItemGroup>
 
