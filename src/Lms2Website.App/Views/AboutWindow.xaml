@@ -37,6 +37,21 @@
                      Text="LMS 2 Website turns a course exported from your learning management system — Brightspace, Canvas, Moodle or Blackboard — into an ordinary website, and puts it on GitHub Pages so anyone with the address can read it. It takes three steps in one window: choose the export, build the website, publish. The website is a folder of plain web pages on this computer that needs no server and no account to open, and nothing is sent anywhere until you press Publish." />
         </StackPanel>
       </Border>
+
+      <!-- Links (portfolio rules, 2026-09-30 and 2026-10-30): the program's page and all the programs.
+           The Microsoft Store line is added once Partner Center gives LMS 2 Website its Store ID. -->
+      <Border Style="{StaticResource CardBorder}">
+        <StackPanel>
+          <TextBlock TextWrapping="Wrap" FontSize="12.5" Margin="0,0,0,4">
+            More about LMS 2 Website, with help and examples:
+            <Hyperlink NavigateUri="https://softwareplus.ai/lms-2-website/" RequestNavigate="OnNavigate">softwareplus.ai/lms-2-website</Hyperlink>
+          </TextBlock>
+          <TextBlock TextWrapping="Wrap" FontSize="12.5">
+            All of Dr. Ron Eaglin's programs:
+            <Hyperlink NavigateUri="https://softwareplus.ai/#programs" RequestNavigate="OnNavigate">softwareplus.ai</Hyperlink>
+          </TextBlock>
+        </StackPanel>
+      </Border>
     </StackPanel>
   </DockPanel>
 </Window>

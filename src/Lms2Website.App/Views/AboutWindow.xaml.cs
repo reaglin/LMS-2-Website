@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Navigation;
 
 namespace Lms2Website.App.Views;
 
@@ -20,4 +22,12 @@ public partial class AboutWindow : Window
         Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "unknown";
 
     private void OnClose(object sender, RoutedEventArgs e) => Close();
+
+    /// <summary>Opens a link in the browser; if there is no browser, the address stays on screen to copy.</summary>
+    private void OnNavigate(object sender, RequestNavigateEventArgs e)
+    {
+        try { Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true }); }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException) { }
+        e.Handled = true;
+    }
 }

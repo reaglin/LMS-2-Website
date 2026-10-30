@@ -106,6 +106,7 @@ it separately.
 | 5.3 | `AppxManifest.xml` with the identity Partner Center reserves | PFN matches the reservation |
 | 5.4 | Privacy page on PunchMonkeyServer (`/privacy/lms2website`) | Live, names the app and Dean Eaglin |
 | 5.5 | WACK, listing copy, screenshots, submit | WACK passes; `resources/STORE-SUBMISSION.md` complete |
+| 5.6 | **The Microsoft Store link in About** — add the Store line once Partner Center gives the Store ID: "LMS 2 Website on the Microsoft Store (updates, ratings and reviews): apps.microsoft.com/detail/{Store ID}", as Accessibility+ does (`..\CLAUDE.md`, the 2026-10-30 About rule) | The link in About opens the Store page |
 
 Statistle's `resources/STORE-SUBMISSION.md` is the template for the whole phase.
 
@@ -127,6 +128,7 @@ Statistle's `resources/STORE-SUBMISSION.md` is the template for the whole phase.
 | 6.10 | ~~Say plainly what "Private repository" costs~~ ⚠️ **2026-09-15** | Answer to question 3 — but **not** with the wording first asked for. "Only people with access can see it" is false: GitHub's own documentation says "GitHub Pages sites are publicly available on the internet, even if the repository for the site is private". Ticking the box now raises a warning saying exactly that, shared word for word with the publish log via `PublishWords`, and pinned by tests so it cannot drift back |
 | 6.11 | ~~What an LMS export is, and how to make one~~ ⚠️ **2026-09-15** | Ron asked for it beside "New to GitHub?". A second help window: what Common Cartridge is and that an `.imscc` is a zip with a catalogue, the export path in Brightspace, Canvas, Moodle and Blackboard, how big to expect, what survives and what cannot, and why a file will not open. It says which of the four has actually been tested here rather than sounding equally sure about all of them |
 | 6.12 | ⚠️ **About — "Created by Dr. Ron Eaglin"** — built 2026-09-26, waiting for Ron to look | Ron, 2026-09-25: every Store program shows who made it. An **About** button at the end of the header row opens a small window: his picture (96 px, rounded, a 256 px copy in `src/Lms2Website.App/Images/`), "Created by Dr. Ron Eaglin", the version read from the assembly (`Lms2WebsiteVersion`), and a plain description of what the app does. Action: open it and say whether the picture and the words are right |
+| 6.13 | ⚠️ **About links to the program's page and all programs** — built 2026-10-30, Ron to look | Ron, 2026-10-30: *"The Help->About on all the apps should have a link to the location of the app on the Windows App Store. They should also have a link to their subdirectory on SoftwarePlus.ai and a link to all programs."* A third card in About: "More about LMS 2 Website, with help and examples: softwareplus.ai/lms-2-website" and "All of Dr. Ron Eaglin's programs: softwareplus.ai" (→ `softwareplus.ai/#programs`); real hyperlinks, reached with Tab, opened in the browser. No Store line until the Store ID exists (5.6). Builds clean, 114 tests green, photographed running (nothing cut off). Action: open About and try both links |
 
 ---
 
